@@ -1,0 +1,4 @@
+(:name multiple-cursors
+       :description "An experiment in adding multiple cursors to emacs"
+       :type git
+       :url "https://github.com/magnars/multiple-cursors.el.git")

@@ -1,0 +1,4 @@
+(:name scala-mode2
+       :description "This is a new scala major mode for emacs 24. It is a complete rewrite based on the Scala Language Specification 2.9."
+       :type git
+       :url "https://github.com/hvesalai/scala-mode2.git")
