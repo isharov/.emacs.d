@@ -1,0 +1,7 @@
+.emacs.desktop*
+.mc-lists.*
+session.*
+tramp
+el-get/
+elpa/
+auto-save-list/
