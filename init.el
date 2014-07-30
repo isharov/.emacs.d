@@ -105,10 +105,11 @@
 (add-hook 'c-mode-common-hook
           (lambda ()
             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-              (ggtags-mode 1))))
+              (ggtags-mode 1)
+              (local-set-key [f10] 'isharov/compile-gtags))))
 
-(global-set-key [f10] 'isharov/compile-gtags)
-;(global-set-key (kbd "M-.") 'isharov/find-tag)
+(global-set-key [f10] 'isharov/compile-etags)
+(global-set-key (kbd "M-.") 'isharov/find-tag)
 
 ;; spell checking
 (global-set-key [f8] 'isharov/toggle-flyspell)
@@ -258,6 +259,21 @@
   (interactive)
   (ggtags-create-tags (ftf-project-directory)))
 
+(defun isharov/compile-etags ()
+  (interactive)
+  (cd (ftf-project-directory))
+  (compile "find -regex '.*\\.\\(c\\|cpp\\|h\\|hpp\\|java\\|scala\\|py\\)$' -print | etags -"))
+
+(defun isharov/find-tag ()
+  (interactive)
+  (let ((tags (path/join (ftf-project-directory) "TAGS"))
+        (tagname (completing-read "Find tag: " nil nil nil (thing-at-point 'word))))
+    (when (file-exists-p tags)
+      (setq tags-revert-without-query t)
+      (setq tags-file-name tags)
+      (setq tags-table-list nil))
+    (find-tag tagname)))
+
 (defun isharov/remove-dos-eol ()
   "Do not show ^M in files containing mixed UNIX and DOS line endings."
   (interactive)
@@ -406,17 +422,3 @@
 ;  (save-some-buffers t)
 ;  (cd (ftf-project-directory))
 ;  (compile compile-command))
-;
-;(defun isharov/compile-etags ()
-;  (interactive)
-;  (cd (ftf-project-directory))
-;  (compile "find -regex '.*\\.\\(c\\|cpp\\|h\\|hpp\\|java\\|scala\\|py\\)$' -print | etags -"))
-;
-;(defun isharov/find-tag ()
-;  (interactive)
-;  (let ((tags    (path/join (ftf-project-directory) "TAGS"))
-;        (tagname (completing-read "Find tag: " nil nil nil (thing-at-point 'word))))
-;    (when (file-exists-p tags)
-;      (setq tags-revert-without-query t)
-;      (setq tags-file-name tags))
-;    (find-tag tagname)))
