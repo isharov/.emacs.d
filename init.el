@@ -6,6 +6,19 @@
     (add-to-list 'load-path (concat pkg-root (symbol-name pkg)))
     (require pkg)))
 
+;; el-get
+(add-to-list 'load-path (concat pkg-root "el-get"))
+
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
+(el-get 'sync)
+
 ;; common editor customization
 (setq c-default-style "linux"
       c-basic-offset 4
@@ -174,19 +187,6 @@
 (add-to-list 'custom-theme-load-path (concat pkg-root "color-theme-solarized"))
 (when (window-system)
   (load-theme 'solarized-dark t))
-
-;; el-get
-(add-to-list 'load-path (concat pkg-root "el-get"))
-
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
-
-(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
-(el-get 'sync)
 
 ;; custom functions
 (defun isharov/cvs-status ()
