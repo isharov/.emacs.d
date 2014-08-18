@@ -183,6 +183,10 @@
 ;; cvs
 (global-set-key (kbd "C-c v c") 'isharov/cvs-status)
 
+;; svn
+(load-packages '(dsvn))
+(global-set-key (kbd "C-c v s") 'isharov/svn-status)
+
 ;; color-theme
 (add-to-list 'custom-theme-load-path (concat pkg-root "color-theme-solarized"))
 (when (window-system)
@@ -192,6 +196,10 @@
 (defun isharov/cvs-status ()
   (interactive)
   (cvs-examine (ftf-project-directory) nil))
+
+(defun isharov/svn-status ()
+  (interactive)
+  (svn-status (ftf-project-directory)))
 
 (defun isharov/toggle-source ()
   "Toggle between source and implementation files"
