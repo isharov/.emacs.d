@@ -1,0 +1,4 @@
+(:name dash.el
+       :description "A modern list library for Emacs"
+       :type git
+       :url "https://github.com/magnars/dash.el.git")

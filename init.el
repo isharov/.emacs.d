@@ -136,6 +136,9 @@
                              (interactive)
                              (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
+;; clojure
+(load-packages '(cider))
+
 ;; C++
 ;;(load-file (concat pkg-root "cedet/common/cedet.el"))
 ;;(add-hook 'c-mode-common-hook 'isharov/cedet-hook)

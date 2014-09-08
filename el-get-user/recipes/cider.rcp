@@ -1,0 +1,4 @@
+(:name cider
+       :description "CIDER is a Clojure IDE and REPL for Emacs"
+       :type git
+       :url "https://github.com/clojure-emacs/cider.git")
