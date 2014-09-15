@@ -131,7 +131,7 @@
 (load-packages '(scala-mode2))
 (add-hook 'scala-mode-hook
           (lambda ()
-            (local-set-key (kbd "C-x C-e")
+            (local-set-key (kbd "C-c C-r")
                            (lambda()
                              (interactive)
                              (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
@@ -161,7 +161,6 @@
             (add-to-list 'python-shell-setup-codes 'python-shell-directory)
             (local-set-key (kbd "C-c C-v") 'isharov/python-check)
             (local-set-key (kbd "C-c V") 'isharov/python-check-dir)
-            (local-set-key (kbd "C-x C-e") (lambda () (interactive) (buffer/create-send-region "*shell*" "")))
             (local-set-key (kbd "C-c C-z") (isharov/python-cd-project 'python-shell-switch-to-shell))
             (local-set-key (kbd "C-c C-c") (isharov/python-cd-project 'python-shell-send-buffer))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
