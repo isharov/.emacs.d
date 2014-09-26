@@ -1,4 +1,0 @@
-(:name ggtags
-       :description "Emacs frontend to GNU Global source code tagging system"
-       :type git
-       :url "https://github.com/leoliu/ggtags.git")

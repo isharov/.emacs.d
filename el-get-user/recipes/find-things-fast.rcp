@@ -1,4 +1,0 @@
-(:name find-things-fast
-       :description "A mode for emacs that helps you work with projects, hopefully with little to no additional configuration on your part."
-       :type git
-       :url "https://github.com/eglaysher/find-things-fast.git")

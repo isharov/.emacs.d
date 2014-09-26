@@ -1,5 +1,0 @@
-(:name git-modes
-       :website "https://github.com/magit/git-modes#readme"
-       :description "Emacs modes for various Git-related files"
-       :type git
-       :url "http://github.com/magit/git-modes.git")

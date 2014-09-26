@@ -1,4 +1,0 @@
-(:name git-gutter
-       :description "git-gutter.el is port of GitGutter which is a plugin of Sublime Text."
-       :type git
-       :url "https://github.com/syohex/emacs-git-gutter.git")
