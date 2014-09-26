@@ -95,6 +95,12 @@
 ;(global-set-key (kbd "C-u C-c SPC") 'ace-jump-char-mode)
 ;(global-set-key (kbd "C-u C-u C-c SPC") 'ace-jump-line-mode)
 
+;; key chords
+(require 'key-chord)
+(key-chord-mode 1)
+(key-chord-define-global "jj" 'ace-jump-word-mode)
+(key-chord-define-global "jk" 'ace-jump-char-mode)
+
 ;; find-things-fast retrieves project files by git or hg
 (require 'find-things-fast)
 (setq ftf-filetypes '("*"))
