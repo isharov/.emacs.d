@@ -1,11 +1,6 @@
 ;; packages
 (setq pkg-root "~/.emacs.d/el-get/")
 
-(defun load-packages (pkgs)
-  (dolist (pkg pkgs)
-    (add-to-list 'load-path (concat pkg-root (symbol-name pkg)))
-    (require pkg)))
-
 ;; el-get
 (add-to-list 'load-path (concat pkg-root "el-get"))
 
@@ -59,7 +54,7 @@
 (ido-mode t)
 (ido-everywhere t)
 (setq ido-enable-flex-matching t)
-(load-packages '(smex))
+(require 'smex)
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command) ; old M-x
@@ -83,7 +78,7 @@
             ))
 
 ;; multiple cursors
-(load-packages '(multiple-cursors))
+(require 'multiple-cursors)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-S-c C-<") 'mc/mark-all-like-this)
@@ -95,13 +90,13 @@
 (global-set-key (kbd "C-S-c C-SPC") 'set-rectangular-region-anchor)
 
 ;; fast cursor move
-(load-packages '(ace-jump-mode))
+(require 'ace-jump-mode)
 (global-set-key (kbd "C-c SPC") 'ace-jump-word-mode)
 ;(global-set-key (kbd "C-u C-c SPC") 'ace-jump-char-mode)
 ;(global-set-key (kbd "C-u C-u C-c SPC") 'ace-jump-line-mode)
 
 ;; find-things-fast retrieves project files by git or hg
-(load-packages '(find-things-fast))
+(require 'find-things-fast)
 (setq ftf-filetypes '("*"))
 (global-set-key [f6] 'ftf-find-file)
 (global-set-key [f7] 'ftf-grepsource)
@@ -109,12 +104,12 @@
 (global-set-key [f9] 'ftf-compile)
 
 ;; text selection
-(load-packages '(expand-region))
+(require 'expand-region)
 (global-set-key (kbd "C-M-SPC") 'er/expand-region)
 (global-set-key (kbd "S-M-SPC") 'isharov/select-current-line)
 
 ;; TAGS
-(load-packages '(ggtags))
+(require 'ggtags)
 (add-hook 'c-mode-common-hook
           (lambda ()
             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
@@ -128,7 +123,7 @@
 (global-set-key [f8] 'isharov/toggle-flyspell)
 
 ;; scala
-(load-packages '(scala-mode2))
+(require 'scala-mode2)
 (add-hook 'scala-mode-hook
           (lambda ()
             (local-set-key (kbd "C-c C-r")
@@ -137,7 +132,7 @@
                              (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
 ;; clojure
-(load-packages '(cider))
+(require 'cider)
 
 ;; C++
 ;;(load-file (concat pkg-root "cedet/common/cedet.el"))
@@ -167,8 +162,8 @@
             ))
 
 ;; git
-(add-to-list 'load-path (concat pkg-root "git-modes"))
-(load-packages '(magit git-gutter))
+(require 'magit)
+(require 'git-gutter)
 (global-git-gutter-mode t)
 ;(custom-set-variables '(git-gutter:hide-gutter t))
 (global-set-key (kbd "C-x C-g") 'git-gutter:toggle)
@@ -186,11 +181,10 @@
 (global-set-key (kbd "C-c v c") 'isharov/cvs-status)
 
 ;; svn
-(load-packages '(dsvn))
+(require 'dsvn)
 (global-set-key (kbd "C-c v s") 'isharov/svn-status)
 
 ;; color-theme
-(add-to-list 'custom-theme-load-path (concat pkg-root "color-theme-solarized"))
 (when (window-system)
   (load-theme 'solarized-dark t))
 
