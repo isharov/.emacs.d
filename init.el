@@ -20,7 +20,8 @@
       backup-inhibited t
       require-final-newline t
       kill-whole-line t)
-(setq-default tab-width 4)
+(setq-default tab-width 4
+              indent-tabs-mode nil)
 (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-12"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 
