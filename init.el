@@ -315,13 +315,8 @@
       (setq python-shell-directory (format "import os\nos.chdir(os.path.expanduser('%s'))" (ftf-project-directory)))
       (funcall fun))))
 
-;; utils
-(defun some (pred elems)
-  (let ((e (car elems)))
-    (if (or (not e) (funcall pred e))
-        e
-      (some pred (cdr elems)))))
 
+;; utils
 (defun path/replace-first (str old new)
   (replace-regexp-in-string (concat "\\(/" old "/\\).*\\'")
                             (concat "/" new "/") str nil nil 1))
@@ -381,62 +376,3 @@
 
 (defun python/check-command (path)
   (format "flake8 --ignore=E501 %s" path))
-
-;; deprecated functions
-;(defun isharov/find ()
-;  "Recursive file search by name"
-;  (interactive)
-;  (let ((term (completing-read "find: " nil nil nil (concat "*" (thing-at-point 'word) "*"))))
-;    (find-name-dired (heu/project-root) term)))
-;
-;(defun isharov/cedet-hook ()
-;  (semantic-load-enable-code-helpers) ; Prototype help and smart completion
-;  (global-srecode-minor-mode 1) ; Template insertion menu
-;  (require 'semantic-ia) ; Names completion, displaying of info for tags & classes
-;  (require 'semantic-gcc) ; Auto find path, where system include files are located
-;
-;  (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu)
-;  (local-set-key "\C-c?" 'semantic-ia-complete-symbol)
-;  (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
-;  (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
-;  (local-set-key "\C-cj" 'semantic-ia-fast-jump)
-;  (local-set-key "\C-cr" 'semantic-symref)
-;  (local-set-key "\C-cf" 'semantic-symref-symbol))
-;
-;(defun ede/project-root ()
-;  "Determines the project root directory for the current buffer"
-;  (ede-project-root-directory (ede/current-project)))
-;
-;(defun ede/get-local (var)
-;  "Fetch given variable var from :local-variables of project of file fname"
-;  (let ((prj (ede/current-project)))
-;    (when prj
-;      (let* ((ov (oref prj local-variables))
-;             (lst (assoc var ov)))
-;        (when lst
-;          (cdr lst))))))
-;
-;(defun ede/get-local (var)
-;  "Fetch given variable var from :local-variables of project of file fname"
-;  (let ((prj (ede/current-project)))
-;    (when prj
-;      (let* ((ov (oref prj local-variables))
-;             (lst (assoc var ov)))
-;        (when lst
-;          (cdr lst))))))
-;
-;(defun heu/project-root ()
-;  (or (path/find-up (path/current-dir) '(".hg" ".git" ".svn" "CMakeLists.txt" "Jamroot"))
-;      (path/current-dir)))
-;
-;(defun path/find-up (base attrs)
-;  (cond ((string= base "/") nil)
-;        ((some (lambda (attr) (file-exists-p (path/join base attr))) attrs) base)
-;        (t (path/find-up (path/parent base) attrs))))
-;
-;(defun isharov/compile ()
-;  "Saves all unsaved buffers, and runs 'compile'."
-;  (interactive)
-;  (save-some-buffers t)
-;  (cd (ftf-project-directory))
-;  (compile compile-command))
