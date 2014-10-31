@@ -171,9 +171,9 @@
 ;; git
 (require 'magit)
 (require 'git-gutter)
-(global-git-gutter-mode t)
+(global-git-gutter-mode -1)
 ;(custom-set-variables '(git-gutter:hide-gutter t))
-(global-set-key (kbd "C-x C-g") 'git-gutter:toggle)
+(global-set-key (kbd "C-x C-g") 'git-gutter-mode)
 (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
 (global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
 (global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
@@ -291,12 +291,18 @@
   (setq buffer-display-table (make-display-table))
   (aset buffer-display-table ?\^M []))
 
-(defun isharov/sudo-edit (&optional arg)
-  (interactive "P")
-  (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:"
-                         (ido-read-file-name "Find file(as root): ")))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+(defun isharov/sudo-edit-current-file ()
+  (interactive)
+  (let ((my-file-name) ; fill this with the file to open
+        (position))    ; if the file is already open save position
+    (if (equal major-mode 'dired-mode) ; test if we are in dired-mode 
+        (progn
+          (setq my-file-name (dired-get-file-for-visit))
+          (find-alternate-file (tramp/prepare-sudo-string my-file-name)))
+      (setq my-file-name (buffer-file-name); hopefully anything else is an already opened file
+            position (point))
+      (find-alternate-file (tramp/prepare-sudo-string my-file-name))
+      (goto-char position))))
 
 (defun isharov/python-check ()
   (interactive)
@@ -376,3 +382,16 @@
 
 (defun python/check-command (path)
   (format "flake8 --ignore=E501 %s" path))
+
+(defun tramp/prepare-sudo-string (tempfile)
+  (if (file-remote-p tempfile)
+      (let ((vec (tramp-dissect-file-name tempfile)))
+        (tramp-make-tramp-file-name
+         "sudo"
+         (tramp-file-name-user nil)
+         (tramp-file-name-host vec)
+         (tramp-file-name-localname vec)
+         (format "ssh:%s@%s|"
+                 (tramp-file-name-user vec)
+                 (tramp-file-name-host vec))))
+    (concat "/sudo:root@localhost:" tempfile)))
