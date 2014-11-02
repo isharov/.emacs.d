@@ -121,10 +121,10 @@
           (lambda ()
             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
               (ggtags-mode 1)
-              (local-set-key [f10] 'isharov/compile-gtags))))
+              (local-set-key [f10] 'tag/compile-gtags))))
 
-(global-set-key [f10] 'isharov/compile-etags)
-(global-set-key (kbd "M-.") 'isharov/find-tag)
+(global-set-key [f10] 'tag/compile-etags)
+(global-set-key (kbd "M-.") 'tag/find-tag)
 
 ;; spell checking
 (global-set-key [f8] 'isharov/toggle-flyspell)
@@ -161,10 +161,10 @@
           (lambda ()
             (defvar python-shell-directory)
             (add-to-list 'python-shell-setup-codes 'python-shell-directory)
-            (local-set-key (kbd "C-c C-v") 'isharov/python-check)
-            (local-set-key (kbd "C-c V") 'isharov/python-check-dir)
-            (local-set-key (kbd "C-c C-z") (isharov/python-cd-project 'python-shell-switch-to-shell))
-            (local-set-key (kbd "C-c C-c") (isharov/python-cd-project 'python-shell-send-buffer))
+            (local-set-key (kbd "C-c C-v") 'python/check)
+            (local-set-key (kbd "C-c V") 'python/check-dir)
+            (local-set-key (kbd "C-c C-z") (python/with-project 'python-shell-switch-to-shell))
+            (local-set-key (kbd "C-c C-c") (python/with-project 'python-shell-send-buffer))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             ))
 
@@ -195,19 +195,19 @@
 (when (window-system)
   (load-theme 'solarized-dark t))
 
-;; custom functions
+
 (defun isharov/cvs-status ()
   (interactive)
-  (cvs-examine (ftf-project-directory) nil))
+  (cvs-examine (path/project-dir) nil))
 
 (defun isharov/svn-status ()
   (interactive)
-  (svn-status (ftf-project-directory)))
+  (svn-status (path/project-dir)))
 
 (defun isharov/toggle-source ()
   "Toggle between source and implementation files"
   (interactive)
-  (let* ((root-dir    (ftf-project-directory))
+  (let* ((root-dir    (path/project-dir))
          (current-dir (path/related-dir))
          (include-dir (path/replace-first current-dir "src" "include"))
          (source-dir  (path/replace-first current-dir "include" "src")))
@@ -232,33 +232,7 @@
   (interactive)
   (let ((term (completing-read "rgrep: " nil nil nil (thing-at-point 'word))))
     (grep-compute-defaults)
-    (rgrep term "*" (ftf-project-directory))))
-
-(defun isharov/diff-region ()
-  "Select a region to compare"
-  (interactive)
-  (when (use-region-p) ; there is a region
-    (let (buf)
-      (setq buf (get-buffer-create "*Diff-regionA*"))
-      (save-current-buffer
-        (set-buffer buf)
-        (erase-buffer))
-      (append-to-buffer buf (region-beginning) (region-end)))
-    )
-  (message "Now select other region to compare and run `diff-region-now`"))
-
-(defun isharov/diff-region-now ()
-  "Compare current region with region already selected by `diff-region`"
-  (interactive)
-  (when (use-region-p)
-    (let (bufa bufb)
-      (setq bufa (get-buffer-create "*Diff-regionA*"))
-      (setq bufb (get-buffer-create "*Diff-regionB*"))
-      (save-current-buffer
-        (set-buffer bufb)
-        (erase-buffer))
-      (append-to-buffer bufb (region-beginning) (region-end))
-      (ediff-buffers bufa bufb))))
+    (rgrep term "*" (path/project-dir))))
 
 (defun isharov/select-current-line ()
   "Select the current line."
@@ -266,18 +240,18 @@
   (end-of-line)
   (set-mark (line-beginning-position)))
 
-(defun isharov/compile-gtags ()
+(defun tag/compile-gtags ()
   (interactive)
-  (ggtags-create-tags (ftf-project-directory)))
+  (ggtags-create-tags (path/project-dir)))
 
-(defun isharov/compile-etags ()
+(defun tag/compile-etags ()
   (interactive)
-  (cd (ftf-project-directory))
+  (cd (path/project-dir))
   (compile "find -regex '.*\\.\\(c\\|cpp\\|h\\|hpp\\|java\\|scala\\|py\\)$' -print | etags -"))
 
-(defun isharov/find-tag ()
+(defun tag/find-tag ()
   (interactive)
-  (let ((tags (path/join (ftf-project-directory) "TAGS"))
+  (let ((tags (path/join (path/project-dir) "TAGS"))
         (tagname (completing-read "Find tag: " nil nil nil (thing-at-point 'word))))
     (when (file-exists-p tags)
       (setq tags-revert-without-query t)
@@ -285,13 +259,7 @@
       (setq tags-table-list nil))
     (find-tag tagname)))
 
-(defun isharov/remove-dos-eol ()
-  "Do not show ^M in files containing mixed UNIX and DOS line endings."
-  (interactive)
-  (setq buffer-display-table (make-display-table))
-  (aset buffer-display-table ?\^M []))
-
-(defun isharov/sudo-edit-current-file ()
+(defun sudo/edit-current-file ()
   (interactive)
   (let ((my-file-name) ; fill this with the file to open
         (position))    ; if the file is already open save position
@@ -304,25 +272,39 @@
       (find-alternate-file (tramp/prepare-sudo-string my-file-name))
       (goto-char position))))
 
-(defun isharov/python-check ()
+(defun tramp/prepare-sudo-string (tempfile)
+  (if (file-remote-p tempfile)
+      (let ((vec (tramp-dissect-file-name tempfile)))
+        (tramp-make-tramp-file-name
+         "sudo"
+         (tramp-file-name-user nil)
+         (tramp-file-name-host vec)
+         (tramp-file-name-localname vec)
+         (format "ssh:%s@%s|"
+                 (tramp-file-name-user vec)
+                 (tramp-file-name-host vec))))
+    (concat "/sudo:root@localhost:" tempfile)))
+
+(defun python/check ()
   (interactive)
   (let ((buf (file-name-nondirectory (buffer-file-name (current-buffer)))))
     (python-check (python/check-command buf))))
 
-(defun isharov/python-check-dir ()
+(defun python/check-dir ()
   (interactive)
-  (let ((dir (read-directory-name "Python check dir: " (ftf-project-directory))))
+  (let ((dir (read-directory-name "Python check dir: " (path/project-dir))))
     (python-check (python/check-command dir))))
 
-(defun isharov/python-cd-project (fun)
+(defun python/check-command (path)
+  (format "flake8 --ignore=E501 %s" path))
+
+(defun python/with-project (fun)
   (lexical-let ((fun fun))
     (lambda ()
       (interactive)
-      (setq python-shell-directory (format "import os\nos.chdir(os.path.expanduser('%s'))" (ftf-project-directory)))
+      (setq python-shell-directory (format "import os\nos.chdir(os.path.expanduser('%s'))" (path/project-dir)))
       (funcall fun))))
 
-
-;; utils
 (defun path/replace-first (str old new)
   (replace-regexp-in-string (concat "\\(/" old "/\\).*\\'")
                             (concat "/" new "/") str nil nil 1))
@@ -354,7 +336,12 @@
   (file-name-directory (or (buffer-file-name (current-buffer)) default-directory)))
 
 (defun path/related-dir ()
-  (substring (path/current-dir) (length (ftf-project-directory))))
+  (substring (path/current-dir) (length (path/project-dir))))
+
+(defun path/project-dir ()
+  (if (tramp-tramp-file-p (buffer-file-name))
+      (path/current-dir)
+    (ftf-project-directory)))
 
 (defun buffer/send-region (buffer)
   (let ((current-buffer (current-buffer)))
@@ -372,7 +359,7 @@
       (shell buffer)
       (previous-buffer)
       (switch-to-buffer-other-window buffer)
-      (insert (concat "cd " (ftf-project-directory) " && " cmd))
+      (insert (concat "cd " (path/project-dir) " && " cmd))
       (execute-kbd-macro "\C-m")
       (switch-to-buffer-other-window current-buffer))))
 
@@ -380,18 +367,34 @@
   (buffer/create-shell shell-name start-command)
   (buffer/send-region shell-name))
 
-(defun python/check-command (path)
-  (format "flake8 --ignore=E501 %s" path))
+(defun buffer/remove-dos-eol ()
+  "Do not show ^M in files containing mixed UNIX and DOS line endings."
+  (interactive)
+  (setq buffer-display-table (make-display-table))
+  (aset buffer-display-table ?\^M []))
 
-(defun tramp/prepare-sudo-string (tempfile)
-  (if (file-remote-p tempfile)
-      (let ((vec (tramp-dissect-file-name tempfile)))
-        (tramp-make-tramp-file-name
-         "sudo"
-         (tramp-file-name-user nil)
-         (tramp-file-name-host vec)
-         (tramp-file-name-localname vec)
-         (format "ssh:%s@%s|"
-                 (tramp-file-name-user vec)
-                 (tramp-file-name-host vec))))
-    (concat "/sudo:root@localhost:" tempfile)))
+(defun buffer/diff-region ()
+  "Select a region to compare"
+  (interactive)
+  (when (use-region-p) ; there is a region
+    (let (buf)
+      (setq buf (get-buffer-create "*Diff-regionA*"))
+      (save-current-buffer
+        (set-buffer buf)
+        (erase-buffer))
+      (append-to-buffer buf (region-beginning) (region-end)))
+    )
+  (message "Now select other region to compare and run `diff-region-now`"))
+
+(defun buffer/diff-region-now ()
+  "Compare current region with region already selected by `diff-region`"
+  (interactive)
+  (when (use-region-p)
+    (let (bufa bufb)
+      (setq bufa (get-buffer-create "*Diff-regionA*"))
+      (setq bufb (get-buffer-create "*Diff-regionB*"))
+      (save-current-buffer
+        (set-buffer bufb)
+        (erase-buffer))
+      (append-to-buffer bufb (region-beginning) (region-end))
+      (ediff-buffers bufa bufb))))
