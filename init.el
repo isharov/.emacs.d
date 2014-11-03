@@ -195,6 +195,12 @@
 (when (window-system)
   (load-theme 'solarized-dark t))
 
+;; shell
+(add-hook 'shell-mode-hook
+          (lambda ()
+            (setq comint-input-ring-file-name "~/.zsh_history")  ;; or bash_history
+            (comint-read-input-ring t)))
+
 
 (defun isharov/cvs-status ()
   (interactive)
