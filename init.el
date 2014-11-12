@@ -115,6 +115,12 @@
 (global-set-key (kbd "C-M-SPC") 'er/expand-region)
 (global-set-key (kbd "S-M-SPC") 'isharov/select-current-line)
 
+;; handy pairs
+(global-set-key (kbd "M-[") 'insert-pair)
+(global-set-key (kbd "M-{") 'insert-pair)
+(global-set-key (kbd "M-\"") 'insert-pair)
+(global-set-key (kbd "M-)") 'delete-pair)
+
 ;; TAGS
 (require 'ggtags)
 (add-hook 'c-mode-common-hook
