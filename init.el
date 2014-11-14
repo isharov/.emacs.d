@@ -206,6 +206,7 @@
           (lambda ()
             (setq comint-input-ring-file-name "~/.zsh_history")  ;; or bash_history
             (comint-read-input-ring t)))
+(add-hook 'kill-buffer-hook 'comint-write-input-ring)
 
 
 (defun isharov/cvs-status ()
