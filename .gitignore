@@ -1,6 +1,7 @@
 .emacs.desktop*
 .mc-lists.*
 session.*
+.inferior-*-history
 tramp
 el-get/
 elpa/

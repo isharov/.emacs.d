@@ -173,6 +173,7 @@
             (local-set-key (kbd "C-c C-c") (python/with-project 'python-shell-send-buffer))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             ))
+(add-hook 'inferior-python-mode-hook 'comint/turn-on-history)
 
 ;; git
 (require 'magit)
@@ -207,6 +208,7 @@
             (setq comint-input-ring-file-name "~/.zsh_history")  ;; or bash_history
             (comint-read-input-ring t)))
 (add-hook 'kill-buffer-hook 'comint-write-input-ring)
+(add-hook 'kill-emacs-hook 'comint/write-input-ring-all-buffers)
 
 
 (defun isharov/cvs-status ()
@@ -237,8 +239,8 @@
   (if flyspell-mode
       (flyspell-mode -1)
     (progn
-      (flyspell-mode)
-      (ispell-change-dictionary "english"))))
+      (ispell-change-dictionary "english")
+      (flyspell-mode))))
 
 (defun isharov/rgrep ()
   "Recursive grep search"
@@ -411,3 +413,28 @@
         (erase-buffer))
       (append-to-buffer bufb (region-beginning) (region-end))
       (ediff-buffers bufa bufb))))
+
+(defun buffer/mapc-buffers (fn)
+  (mapc (lambda (buffer)
+          (with-current-buffer buffer
+            (funcall fn)))
+        (buffer-list)))
+
+(defun comint/write-history-on-exit (process event)
+  (comint-write-input-ring)
+  (let ((buf (process-buffer process)))
+    (when (buffer-live-p buf)
+      (with-current-buffer buf
+        (insert (format "\nProcess %s %s" process event))))))
+
+(defun comint/turn-on-history ()
+  (let ((process (get-buffer-process (current-buffer))))
+    (when process
+      (setq comint-input-ring-file-name
+            (format "~/.emacs.d/.inferior-%s-history"
+                    (process-name process)))
+      (comint-read-input-ring)
+      (set-process-sentinel process 'comint/write-history-on-exit))))
+
+(defun comint/write-input-ring-all-buffers ()
+  (buffer/mapc-buffers 'comint-write-input-ring))
