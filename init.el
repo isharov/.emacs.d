@@ -199,7 +199,7 @@
 
 ;; color-theme
 (when (window-system)
-  (load-theme 'solarized-dark t))
+  (load-theme 'zenburn t))
 
 ;; shell
 (add-hook 'shell-mode-hook
