@@ -60,6 +60,11 @@
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command) ; old M-x
 
+;; recentf mode
+(require 'recentf)
+(recentf-mode 1)
+(global-set-key (kbd "C-x C-r") 'recentf/ido-find-file)
+
 ;; uniquify mode
 (require 'uniquify) ; making buffer names unique
 (setq uniquify-buffer-name-style 'post-forward)
@@ -119,6 +124,7 @@
 (global-set-key (kbd "M-[") 'insert-pair)
 (global-set-key (kbd "M-{") 'insert-pair)
 (global-set-key (kbd "M-\"") 'insert-pair)
+(global-set-key (kbd "M-'") 'insert-pair)
 (global-set-key (kbd "M-)") 'delete-pair)
 
 ;; TAGS
@@ -438,3 +444,9 @@
 
 (defun comint/write-input-ring-all-buffers ()
   (buffer/mapc-buffers 'comint-write-input-ring))
+
+(defun recentf/ido-find-file ()
+  (interactive)
+  (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
+    (when file
+      (find-file file))))
