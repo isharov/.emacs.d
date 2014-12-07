@@ -63,6 +63,7 @@
 ;; recentf mode
 (require 'recentf)
 (recentf-mode 1)
+(setq recentf-max-saved-items 50)
 (global-set-key (kbd "C-x C-r") 'recentf/ido-find-file)
 
 ;; uniquify mode
@@ -140,6 +141,9 @@
 
 ;; spell checking
 (global-set-key [f8] 'isharov/toggle-flyspell)
+
+;; tramp mode
+(setq password-cache-expiry nil)
 
 ;; scala
 (require 'scala-mode2)
