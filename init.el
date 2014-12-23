@@ -220,7 +220,9 @@
 ;; shell
 (add-hook 'shell-mode-hook
           (lambda ()
-            (setq comint-input-ring-file-name "~/.zsh_history")  ;; or bash_history
+            (setq comint-input-ring-file-name "~/.emacs.d/.shell_history"
+                  comint-input-ignoredups t
+                  comint-input-ring-size 1000)
             (comint-read-input-ring t)))
 ;(add-hook 'shell-mode-hook (lambda () (goto-address-mode)))
 ;(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
