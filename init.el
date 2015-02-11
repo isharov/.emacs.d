@@ -19,7 +19,8 @@
       c-basic-offset 4
       backup-inhibited t
       require-final-newline t
-      kill-whole-line t)
+      kill-whole-line t
+      recentf-max-saved-items 50)
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
@@ -34,6 +35,8 @@
 (show-paren-mode 1)
 (desktop-save-mode 1)
 (electric-pair-mode 1)
+(key-chord-mode 1)
+(recentf-mode 1)
 
 ;; window splitting
 (when (not (daemonp))
@@ -51,21 +54,21 @@
 ;; enable some commands
 (put 'erase-buffer 'disabled nil)
 
-;; ido mode
-(require 'ido) ; interactively do things with buffers and files
-(ido-mode t)
-(ido-everywhere t)
-(setq ido-enable-flex-matching t)
-(require 'smex)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command) ; old M-x
-
-;; recentf mode
-(require 'recentf)
-(recentf-mode 1)
-(setq recentf-max-saved-items 50)
-(global-set-key (kbd "C-x C-r") 'recentf/ido-find-file)
+;; helm mode
+(helm-mode 1)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-x C-r") 'helm-recentf)
+(global-set-key (kbd "C-c h /") 'helm-find)
+(global-set-key (kbd "C-c h l") 'helm-locate)
+(global-set-key (kbd "C-c h o") 'helm-occur)
+(global-set-key (kbd "C-c h a") 'helm-apropos)
+(global-set-key (kbd "C-c h b") 'helm-resume)
+(define-key shell-mode-map (kbd "M-r") 'helm-comint-input-ring)
+(define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
+(add-to-list 'desktop-globals-to-save 'extended-command-history)
 
 ;; uniquify mode
 (require 'uniquify) ; making buffer names unique
@@ -98,24 +101,22 @@
 (global-set-key (kbd "C-S-c C-SPC") 'set-rectangular-region-anchor)
 
 ;; fast cursor move
-(require 'ace-jump-mode)
 (global-set-key (kbd "C-c SPC") 'ace-jump-word-mode)
 ;(global-set-key (kbd "C-u C-c SPC") 'ace-jump-char-mode)
 ;(global-set-key (kbd "C-u C-u C-c SPC") 'ace-jump-line-mode)
-
-;; key chords
-(require 'key-chord)
-(key-chord-mode 1)
 (key-chord-define-global "jj" 'ace-jump-word-mode)
 (key-chord-define-global "jk" 'ace-jump-char-mode)
 
-;; find-things-fast retrieves project files by git or hg
-(require 'find-things-fast)
-(setq ftf-filetypes '("*"))
-(global-set-key [f6] 'ftf-find-file)
-(global-set-key [f7] 'ftf-grepsource)
-(global-set-key [M-f7] 'isharov/rgrep)
-(global-set-key [f9] 'ftf-compile)
+;; project
+(global-set-key (kbd "C-c c") 'project/compile)
+(global-set-key (kbd "C-c f") 'helm-git-files)
+(key-chord-define-global "ff" 'helm-git-files)
+(global-set-key (kbd "C-c C-g") 'project/rgrep)
+(global-set-key (kbd "C-c g") 'helm-git-grep-at-point)
+(key-chord-define-global "gg" 'helm-git-grep-at-point)
+(define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
+(eval-after-load 'helm
+  '(define-key helm-map (kbd "C-c g") 'helm-git-grep-from-helm))
 
 ;; text selection
 (require 'expand-region)
@@ -233,16 +234,16 @@
 
 (defun isharov/cvs-status ()
   (interactive)
-  (cvs-examine (path/project-dir) nil))
+  (cvs-examine (project/root) nil))
 
 (defun isharov/svn-status ()
   (interactive)
-  (svn-status (path/project-dir)))
+  (svn-status (project/root)))
 
 (defun isharov/toggle-source ()
   "Toggle between source and implementation files"
   (interactive)
-  (let* ((root-dir    (path/project-dir))
+  (let* ((root-dir    (project/root))
          (current-dir (path/related-dir))
          (include-dir (path/replace-first current-dir "src" "include"))
          (source-dir  (path/replace-first current-dir "include" "src")))
@@ -262,13 +263,6 @@
       (ispell-change-dictionary "english")
       (flyspell-mode))))
 
-(defun isharov/rgrep ()
-  "Recursive grep search"
-  (interactive)
-  (let ((term (completing-read "rgrep: " nil nil nil (thing-at-point 'word))))
-    (grep-compute-defaults)
-    (rgrep term "*" (path/project-dir))))
-
 (defun isharov/select-current-line ()
   "Select the current line."
   (interactive)
@@ -277,16 +271,16 @@
 
 (defun tag/compile-gtags ()
   (interactive)
-  (ggtags-create-tags (path/project-dir)))
+  (ggtags-create-tags (project/root)))
 
 (defun tag/compile-etags ()
   (interactive)
-  (cd (path/project-dir))
+  (cd (project/root))
   (compile "find -regex '.*\\.\\(c\\|cpp\\|h\\|hpp\\|java\\|scala\\|py\\)$' -print | etags -"))
 
 (defun tag/find-tag ()
   (interactive)
-  (let ((tags (path/join (path/project-dir) "TAGS"))
+  (let ((tags (path/join (project/root) "TAGS"))
         (tagname (completing-read "Find tag: " nil nil nil (thing-at-point 'word))))
     (when (file-exists-p tags)
       (setq tags-revert-without-query t)
@@ -327,7 +321,7 @@
 
 (defun python/check-dir ()
   (interactive)
-  (let ((dir (read-directory-name "Python check dir: " (path/project-dir))))
+  (let ((dir (read-directory-name "Python check dir: " (project/root))))
     (python-check (python/check-command dir))))
 
 (defun python/check-command (path)
@@ -337,7 +331,7 @@
   (lexical-let ((fun fun))
     (lambda ()
       (interactive)
-      (setq python-shell-directory (format "import os\nos.chdir(os.path.expanduser('%s'))" (path/project-dir)))
+      (setq python-shell-directory (format "import os\nos.chdir(os.path.expanduser('%s'))" (project/root)))
       (funcall fun))))
 
 (defun path/replace-first (str old new)
@@ -371,12 +365,7 @@
   (file-name-directory (or (buffer-file-name (current-buffer)) default-directory)))
 
 (defun path/related-dir ()
-  (substring (path/current-dir) (length (path/project-dir))))
-
-(defun path/project-dir ()
-  (if (tramp-tramp-file-p (buffer-file-name))
-      (path/current-dir)
-    (ftf-project-directory)))
+  (substring (path/current-dir) (length (project/root))))
 
 (defun buffer/send-region (buffer)
   (let ((current-buffer (current-buffer)))
@@ -394,7 +383,7 @@
       (shell buffer)
       (previous-buffer)
       (switch-to-buffer-other-window buffer)
-      (insert (concat "cd " (path/project-dir) " && " cmd))
+      (insert (concat "cd " (project/root) " && " cmd))
       (execute-kbd-macro "\C-m")
       (switch-to-buffer-other-window current-buffer))))
 
@@ -459,13 +448,35 @@
 (defun comint/write-input-ring-all-buffers ()
   (buffer/mapc-buffers 'comint-write-input-ring))
 
-(defun recentf/ido-find-file ()
+(defun project/root ()
+  (if (tramp-tramp-file-p (buffer-file-name))
+      (path/current-dir)
+    (or (project/git-root default-directory)
+        default-directory)))
+
+(defun project/git-root (dir)
+  (with-temp-buffer
+    (if (eq 0 (call-process "git" nil t nil "rev-parse"))
+        (let ((cdup (with-output-to-string
+                      (with-current-buffer standard-output
+                        (cd dir)
+                        (call-process "git" nil t nil
+                                      "rev-parse" "--show-cdup")))))
+          (expand-file-name (concat (file-name-as-directory dir)
+                                    (car (split-string cdup "\n")))))
+      nil)))
+
+(defmacro project/with-root (&rest body)
+  `(let ((default-directory (project/root)))
+     ,@body))
+
+(defun project/compile ()
   (interactive)
-  (let* ((file-assoc-list
-          (mapcar (lambda (x)
-                    (cons (file-name-nondirectory x) x))
-                  recentf-list))
-         (filename-list (remove-duplicates (mapcar #'car file-assoc-list) :test #'string=))
-         (filename (ido-completing-read "Choose recent file: " filename-list nil t)))
-    (when filename
-      (find-file (cdr (assoc filename file-assoc-list))))))
+  (project/with-root (call-interactively 'compile)))
+
+(defun project/rgrep ()
+  "Recursive grep search"
+  (interactive)
+  (let ((term (completing-read "rgrep: " nil nil nil (thing-at-point 'word))))
+    (grep-compute-defaults)
+    (rgrep term "*" (project/root))))
