@@ -60,7 +60,7 @@
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "C-x C-r") 'helm-recentf)
+;(global-set-key (kbd "C-x C-r") 'helm-recentf)
 (global-set-key (kbd "C-c h /") 'helm-find)
 (global-set-key (kbd "C-c h l") 'helm-locate)
 (global-set-key (kbd "C-c h o") 'helm-occur)
@@ -110,7 +110,6 @@
 (global-set-key (kbd "C-c c") 'project/compile)
 (global-set-key (kbd "C-c f") 'helm-git-files)
 (key-chord-define-global "ff" 'helm-git-files)
-(global-set-key (kbd "C-c C-g") 'project/rgrep)
 (global-set-key (kbd "C-c g") 'helm-git-grep-at-point)
 (key-chord-define-global "gg" 'helm-git-grep-at-point)
 (define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
@@ -135,13 +134,13 @@
           (lambda ()
             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
               (ggtags-mode 1)
-              (local-set-key [f10] 'tag/compile-gtags))))
+              (local-set-key (kbd "C-c t") 'tag/compile-gtags))))
 
-(global-set-key [f10] 'tag/compile-etags)
+(global-set-key (kbd "C-c t") 'tag/compile-etags)
 (global-set-key (kbd "M-.") 'tag/find-tag)
 
 ;; spell checking
-(global-set-key [f8] 'isharov/toggle-flyspell)
+(global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
 
 ;; tramp mode
 (setq password-cache-expiry nil)
@@ -163,7 +162,7 @@
 ;;(add-hook 'c-mode-common-hook 'isharov/cedet-hook)
 (add-hook 'c-mode-common-hook
           (lambda ()
-            (local-set-key "\C-ct" 'isharov/toggle-source)
+            (local-set-key (kbd "C-x t") 'isharov/toggle-source)
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             ))
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ; using c++ mode for *.h files
@@ -189,8 +188,11 @@
             (local-set-key (kbd "C-c C-c") (python/with-project 'python-shell-send-buffer))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             ))
-(add-hook 'inferior-python-mode-hook 'comint/turn-on-history)
-(define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
+(add-hook 'inferior-python-mode-hook
+          (lambda ()
+            (comint/turn-on-history)
+            (define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
+            ))
 
 ;; git
 (require 'magit)
