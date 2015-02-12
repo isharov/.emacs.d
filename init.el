@@ -451,8 +451,27 @@
 (defun project/root ()
   (if (tramp-tramp-file-p (buffer-file-name))
       (path/current-dir)
-    (or (project/git-root default-directory)
+    (or (project/locals-root)
+        (project/git-root default-directory)
         default-directory)))
+
+(defun project/locals-root ()
+  (defun parent-dir (path)
+    (file-name-directory (directory-file-name path)))
+  (defun dir-has-project-file (path)
+    (or (file-exists-p (concat path "/.dir-locals.el"))
+        (file-exists-p (concat path "/.emacs-project"))))
+  (let ((path default-directory)
+        (return-path nil))
+    (while path
+      (cond ((string-equal path "/")
+             (setq return-path nil
+                   path nil))
+            ((dir-has-project-file path)
+             (setq return-path path
+                   path nil))
+            (t (set 'path (parent-dir path)))))
+    return-path))
 
 (defun project/git-root (dir)
   (with-temp-buffer
