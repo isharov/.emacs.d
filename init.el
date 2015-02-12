@@ -66,7 +66,6 @@
 (global-set-key (kbd "C-c h o") 'helm-occur)
 (global-set-key (kbd "C-c h a") 'helm-apropos)
 (global-set-key (kbd "C-c h b") 'helm-resume)
-(define-key shell-mode-map (kbd "M-r") 'helm-comint-input-ring)
 (define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
 (add-to-list 'desktop-globals-to-save 'extended-command-history)
 
@@ -191,6 +190,7 @@
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             ))
 (add-hook 'inferior-python-mode-hook 'comint/turn-on-history)
+(define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
 
 ;; git
 (require 'magit)
@@ -230,6 +230,7 @@
 ;(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 (add-hook 'kill-buffer-hook 'comint-write-input-ring)
 (add-hook 'kill-emacs-hook 'comint/write-input-ring-all-buffers)
+(define-key shell-mode-map (kbd "M-r") 'helm-comint-input-ring)
 
 
 (defun isharov/cvs-status ()
