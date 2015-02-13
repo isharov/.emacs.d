@@ -35,7 +35,7 @@
 (show-paren-mode 1)
 (desktop-save-mode 1)
 (electric-pair-mode 1)
-(key-chord-mode 1)
+;(key-chord-mode 1)
 (recentf-mode 1)
 
 ;; window splitting
@@ -100,18 +100,12 @@
 (global-set-key (kbd "C-S-c C-SPC") 'set-rectangular-region-anchor)
 
 ;; fast cursor move
-(global-set-key (kbd "C-c SPC") 'ace-jump-word-mode)
-;(global-set-key (kbd "C-u C-c SPC") 'ace-jump-char-mode)
-;(global-set-key (kbd "C-u C-u C-c SPC") 'ace-jump-line-mode)
-(key-chord-define-global "jj" 'ace-jump-word-mode)
-(key-chord-define-global "jk" 'ace-jump-char-mode)
+(global-set-key (kbd "C-c SPC") 'ace-jump-char-mode)
 
 ;; project
 (global-set-key (kbd "C-c c") 'project/compile)
 (global-set-key (kbd "C-c f") 'helm-git-files)
-(key-chord-define-global "ff" 'helm-git-files)
 (global-set-key (kbd "C-c g") 'helm-git-grep-at-point)
-(key-chord-define-global "gg" 'helm-git-grep-at-point)
 (define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
 (eval-after-load 'helm
   '(define-key helm-map (kbd "C-c g") 'helm-git-grep-from-helm))
