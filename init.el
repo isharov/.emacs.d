@@ -100,7 +100,7 @@
 (global-set-key (kbd "C-S-c C-SPC") 'set-rectangular-region-anchor)
 
 ;; fast cursor move
-(global-set-key (kbd "C-c SPC") 'ace-jump-char-mode)
+(global-set-key (kbd "C-c SPC") 'ace-jump-word-mode)
 
 ;; project
 (global-set-key (kbd "C-c c") 'project/compile)
