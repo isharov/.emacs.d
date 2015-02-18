@@ -115,6 +115,12 @@
 (global-set-key (kbd "C-M-SPC") 'er/expand-region)
 (global-set-key (kbd "S-M-SPC") 'isharov/select-current-line)
 
+;; semantic navigation
+(global-set-key (kbd "C-<up>") 'smart-up)
+(global-set-key (kbd "C-<down>") 'smart-down)
+(global-set-key (kbd "C-<left>") 'smart-backward)
+(global-set-key (kbd "C-<right>") 'smart-forward)
+
 ;; handy pairs
 (global-set-key (kbd "M-[") 'insert-pair)
 (global-set-key (kbd "M-{") 'insert-pair)
