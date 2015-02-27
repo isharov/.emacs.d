@@ -38,14 +38,6 @@
 ;(key-chord-mode 1)
 (recentf-mode 1)
 
-;; window splitting
-(when (not (daemonp))
-  (split-window-vertically)
-  (other-window 1)
-  (split-window-horizontally)
-  (other-window 2)
-  (split-window-horizontally))
-
 ;; window navigation
 (windmove-default-keybindings 'meta)
 ;(setq windmove-wrap-around t)
