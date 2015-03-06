@@ -52,6 +52,9 @@
 ;; enable some commands
 (put 'erase-buffer 'disabled nil)
 
+;; auto-delete trailing whitespace
+(add-hook 'write-file-hooks 'delete-trailing-whitespace)
+
 ;; helm mode
 (helm-mode 1)
 (global-set-key (kbd "M-x") 'helm-M-x)
