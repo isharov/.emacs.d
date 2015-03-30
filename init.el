@@ -240,7 +240,10 @@
 
 ;; color-theme
 (when (window-system)
-  (load-theme 'zenburn t))
+  (load-theme 'zenburn t)
+  (zenburn-with-color-variables
+    (set-face-attribute 'diff-refine-added nil :background zenburn-bg+2)
+    (set-face-attribute 'diff-refine-removed nil :background zenburn-bg+2)))
 
 ;; shell
 (add-hook 'shell-mode-hook
@@ -316,7 +319,7 @@
   (interactive)
   (let ((my-file-name) ; fill this with the file to open
         (position))    ; if the file is already open save position
-    (if (equal major-mode 'dired-mode) ; test if we are in dired-mode 
+    (if (equal major-mode 'dired-mode) ; test if we are in dired-mode
         (progn
           (setq my-file-name (dired-get-file-for-visit))
           (find-alternate-file (tramp/prepare-sudo-string my-file-name)))
