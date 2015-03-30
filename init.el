@@ -161,8 +161,22 @@
                              (interactive)
                              (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
-;; clojure
-(require 'cider)
+;; js
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+;(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+(setq-default js2-basic-offset 4
+              js2-bounce-indent-p nil)
+(add-hook 'js2-mode-hook
+          (lambda ()
+            (electric-indent-mode -1)
+            (modify-syntax-entry ?< "(>") ; for jsx
+            (modify-syntax-entry ?> ")<")
+            (modify-syntax-entry ?_ "w")
+            (local-set-key (kbd "C-c C-v") 'js2-display-error-list)
+            ))
+(add-hook 'js2-mode-hook 'skewer-mode)
+(add-hook 'css-mode-hook 'skewer-css-mode)
+(add-hook 'html-mode-hook 'skewer-html-mode)
 
 ;; C++
 ;;(load-file (concat pkg-root "cedet/common/cedet.el"))
