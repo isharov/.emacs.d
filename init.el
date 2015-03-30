@@ -70,13 +70,19 @@
 (define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
 (add-to-list 'desktop-globals-to-save 'extended-command-history)
 
-;; uniquify mode
-(require 'uniquify) ; making buffer names unique
-(setq uniquify-buffer-name-style 'post-forward)
+;; helm-swoop
+(require 'helm-swoop)
+(global-set-key (kbd "M-i") 'helm-swoop)
+(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+(define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
+(define-key helm-swoop-map (kbd "C-s") 'helm-next-line)
+(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
+(define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
 
 ;; dired
 (setq dired-recursive-copies 'always)
-(setq dired-recursive-deletes 'top)
+(setq dired-recursive-deletes 'always)
 (setq dired-dwim-target t)
 (global-set-key (kbd "C-x C-j") 'dired-jump)
 (put 'dired-find-alternate-file 'disabled nil)
