@@ -168,7 +168,7 @@
               js2-bounce-indent-p nil)
 (add-hook 'js2-mode-hook
           (lambda ()
-            (electric-indent-mode -1)
+            (electric-indent-local-mode -1)
             (modify-syntax-entry ?< "(>") ; for jsx
             (modify-syntax-entry ?> ")<")
             (modify-syntax-entry ?_ "w")
@@ -196,7 +196,8 @@
  python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
  python-shell-completion-setup-code "from IPython.core.completerlib import module_completion"
  python-shell-completion-module-string-code "';'.join(module_completion('''%s'''))\n"
- python-shell-completion-string-code "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+ python-shell-completion-string-code "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"
+ venv-location "~/.virtualenvs/")
 (add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
 (add-to-list 'auto-mode-alist '("SConscript" . python-mode))
 (add-hook 'python-mode-hook
@@ -253,7 +254,7 @@
                   comint-input-ring-size 1000)
             (comint-read-input-ring t)))
 ;(add-hook 'shell-mode-hook (lambda () (goto-address-mode)))
-;(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
+(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 (add-hook 'kill-buffer-hook 'comint-write-input-ring)
 (add-hook 'kill-emacs-hook 'comint/write-input-ring-all-buffers)
 (define-key shell-mode-map (kbd "M-r") 'helm-comint-input-ring)
