@@ -20,7 +20,7 @@
       backup-inhibited t
       require-final-newline t
       kill-whole-line t
-      recentf-max-saved-items 50)
+      recentf-max-saved-items 500)
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
@@ -62,11 +62,11 @@
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 ;(global-set-key (kbd "C-x C-r") 'helm-recentf)
-(global-set-key (kbd "C-c h /") 'helm-find)
-(global-set-key (kbd "C-c h l") 'helm-locate)
-(global-set-key (kbd "C-c h o") 'helm-occur)
-(global-set-key (kbd "C-c h a") 'helm-apropos)
-(global-set-key (kbd "C-c h b") 'helm-resume)
+(global-set-key (kbd "C-x c /") 'helm-find)
+(global-set-key (kbd "C-x c l") 'helm-locate)
+(global-set-key (kbd "C-x c o") 'helm-occur)
+(global-set-key (kbd "C-x c a") 'helm-apropos)
+(global-set-key (kbd "C-x c b") 'helm-resume)
 (define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
 (add-to-list 'desktop-globals-to-save 'extended-command-history)
 
@@ -353,7 +353,7 @@
     (python-check (python/check-command dir))))
 
 (defun python/check-command (path)
-  (format "flake8 --ignore=E501 %s" path))
+  (format "python -m flake8 --ignore=E501 %s" path))
 
 (defun python/with-project (fun)
   (lexical-let ((fun fun))
