@@ -107,7 +107,8 @@
 (global-set-key (kbd "C-S-c C-SPC") 'set-rectangular-region-anchor)
 
 ;; fast cursor move
-(global-set-key (kbd "C-c SPC") 'ace-jump-word-mode)
+(avy-setup-default)
+(global-set-key (kbd "C-'") 'avy-goto-char-2)
 
 ;; project
 (global-set-key (kbd "C-c c") 'project/compile)
@@ -191,7 +192,6 @@
 ;; Python
 (setq
  python-shell-interpreter "ipython"
- python-shell-interpreter-args ""
  python-shell-prompt-regexp "In \\[[0-9]+\\]: "
  python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
  python-shell-completion-setup-code "from IPython.core.completerlib import module_completion"
