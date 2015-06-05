@@ -20,7 +20,9 @@
       backup-inhibited t
       require-final-newline t
       kill-whole-line t
-      recentf-max-saved-items 500)
+      recentf-max-saved-items 500
+      enable-recursive-minibuffers t
+      scroll-preserve-screen-position 'always)
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
@@ -69,6 +71,7 @@
 (global-set-key (kbd "C-x c b") 'helm-resume)
 (define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
 (add-to-list 'desktop-globals-to-save 'extended-command-history)
+(setq helm-split-window-in-side-p t)
 
 ;; helm-swoop
 (require 'helm-swoop)
@@ -108,7 +111,9 @@
 
 ;; fast cursor move
 (avy-setup-default)
-(global-set-key (kbd "C-'") 'avy-goto-char-2)
+(global-set-key (kbd "C-'") 'avy-goto-subword-1)
+(setq avy-background t
+      avy-all-windows 'all-frames)
 
 ;; project
 (global-set-key (kbd "C-c c") 'project/compile)
@@ -163,7 +168,8 @@
                              (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
 ;; js
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+;(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-hook 'js-mode-hook 'js2-minor-mode)
 ;(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
 (setq-default js2-basic-offset 4
               js2-bounce-indent-p nil)
@@ -175,6 +181,7 @@
             (modify-syntax-entry ?_ "w")
             (local-set-key (kbd "C-c C-v") 'js2-display-error-list)
             ))
+(add-hook 'js-mode-hook 'skewer-mode)
 (add-hook 'js2-mode-hook 'skewer-mode)
 (add-hook 'css-mode-hook 'skewer-css-mode)
 (add-hook 'html-mode-hook 'skewer-html-mode)
@@ -231,6 +238,7 @@
 (add-to-list 'git-gutter:update-hooks 'magit-revert-buffer-hook)
 (add-to-list 'git-gutter:update-commands 'previous-buffer)
 (add-to-list 'git-gutter:update-commands 'next-buffer)
+(setq magit-last-seen-setup-instructions "1.4.0")
 
 ;; cvs
 (global-set-key (kbd "C-c v c") 'isharov/cvs-status)
