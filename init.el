@@ -155,6 +155,12 @@
 ;; spell checking
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
 
+;; flycheck
+(global-set-key (kbd "C-c c") 'flycheck-mode)
+(add-hook 'flycheck-mode-hook
+          (lambda ()
+            (setq flycheck-flake8rc "~/.emacs.d/.flake8rc")))
+
 ;; tramp mode
 (setq password-cache-expiry nil)
 
@@ -171,13 +177,8 @@
 ;(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'js-mode-hook 'js2-minor-mode)
 ;(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-(setq-default js2-basic-offset 4
-              js2-bounce-indent-p nil)
-(add-hook 'js2-mode-hook
+(add-hook 'js-mode-hook
           (lambda ()
-            (electric-indent-local-mode -1)
-            (modify-syntax-entry ?< "(>") ; for jsx
-            (modify-syntax-entry ?> ")<")
             (modify-syntax-entry ?_ "w")
             (local-set-key (kbd "C-c C-v") 'js2-display-error-list)
             ))
