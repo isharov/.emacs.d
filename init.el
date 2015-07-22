@@ -111,7 +111,7 @@
 
 ;; fast cursor move
 (avy-setup-default)
-(global-set-key (kbd "C-'") 'avy-goto-subword-1)
+(global-set-key (kbd "C-'") 'avy-goto-word-or-subword-1)
 (setq avy-background t
       avy-all-windows 'all-frames)
 
@@ -156,6 +156,7 @@
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
 
 ;; flycheck
+(add-hook 'after-init-hook #'global-flycheck-mode)
 (global-set-key (kbd "C-c c") 'flycheck-mode)
 (add-hook 'flycheck-mode-hook
           (lambda ()
@@ -227,7 +228,7 @@
 ;; git
 (require 'magit)
 (require 'git-gutter)
-(global-git-gutter-mode -1)
+(global-git-gutter-mode +1)
 ;(custom-set-variables '(git-gutter:hide-gutter t))
 (global-set-key (kbd "C-x C-g") 'git-gutter-mode)
 (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
@@ -251,9 +252,10 @@
 ;; color-theme
 (when (window-system)
   (load-theme 'zenburn t)
-  (zenburn-with-color-variables
-    (set-face-attribute 'diff-refine-added nil :background zenburn-bg+2)
-    (set-face-attribute 'diff-refine-removed nil :background zenburn-bg+2)))
+  ;(zenburn-with-color-variables
+  ;  (set-face-attribute 'diff-refine-added nil :background zenburn-bg+2)
+  ;  (set-face-attribute 'diff-refine-removed nil :background zenburn-bg+2))
+  )
 
 ;; shell
 (add-hook 'shell-mode-hook
