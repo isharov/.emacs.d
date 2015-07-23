@@ -160,7 +160,8 @@
 (global-set-key (kbd "C-c c") 'flycheck-mode)
 (add-hook 'flycheck-mode-hook
           (lambda ()
-            (setq flycheck-flake8rc "~/.emacs.d/.flake8rc")))
+            (setq flycheck-checker-error-threshold nil)
+            ))
 
 ;; tramp mode
 (setq password-cache-expiry nil)
@@ -175,18 +176,17 @@
                              (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
 ;; js
-;(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-hook 'js-mode-hook 'js2-minor-mode)
-;(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-(add-hook 'js-mode-hook
-          (lambda ()
-            (modify-syntax-entry ?_ "w")
-            (local-set-key (kbd "C-c C-v") 'js2-display-error-list)
-            ))
-(add-hook 'js-mode-hook 'skewer-mode)
-(add-hook 'js2-mode-hook 'skewer-mode)
+;; npm install eslint babel-eslint eslint-plugin-react
+(add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . web-mode))
+(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+(add-hook 'web-mode-hook 'skewer-mode)
 (add-hook 'css-mode-hook 'skewer-css-mode)
 (add-hook 'html-mode-hook 'skewer-html-mode)
+(add-hook 'flycheck-mode-hook
+          (lambda ()
+            (flycheck-add-mode 'javascript-eslint 'web-mode)
+            (setq flycheck-eslintrc "~/.emacs.d/.eslintrc")
+            ))
 
 ;; C++
 ;;(load-file (concat pkg-root "cedet/common/cedet.el"))
@@ -223,6 +223,10 @@
           (lambda ()
             (comint/turn-on-history)
             (define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
+            ))
+(add-hook 'flycheck-mode-hook
+          (lambda ()
+            (setq flycheck-flake8rc "~/.emacs.d/.flake8rc")
             ))
 
 ;; git
