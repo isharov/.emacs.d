@@ -1,4 +1,6 @@
-;; packages
+;; package --- My init.el
+;;; Commentary:
+;;; Code:
 (setq pkg-root "~/.emacs.d/el-get/")
 
 ;; el-get
@@ -69,6 +71,7 @@
 (global-set-key (kbd "C-x c o") 'helm-occur)
 (global-set-key (kbd "C-x c a") 'helm-apropos)
 (global-set-key (kbd "C-x c b") 'helm-resume)
+(global-set-key (kbd "M-?") 'helm-dabbrev)
 (define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
 (add-to-list 'desktop-globals-to-save 'extended-command-history)
 (setq helm-split-window-in-side-p t)
@@ -112,13 +115,13 @@
 ;; fast cursor move
 (avy-setup-default)
 (global-set-key (kbd "C-'") 'avy-goto-word-or-subword-1)
-(setq avy-background t
+(setq avy-background nil
       avy-all-windows 'all-frames)
 
 ;; project
 (global-set-key (kbd "C-c c") 'project/compile)
 (global-set-key (kbd "C-c f") 'helm-git-files)
-(global-set-key (kbd "C-c g") 'helm-git-grep-at-point)
+(global-set-key (kbd "C-c g") 'project/git-grep)
 (define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
 (eval-after-load 'helm
   '(define-key helm-map (kbd "C-c g") 'helm-git-grep-from-helm))
@@ -542,3 +545,10 @@
   (let ((term (completing-read "rgrep: " nil nil nil (thing-at-point 'word))))
     (grep-compute-defaults)
     (rgrep term "*" (project/root))))
+
+(defun project/git-grep ()
+  (interactive)
+  (if (use-region-p)
+      (let ((str (buffer-substring-no-properties (region-beginning) (region-end))))
+        (helm-git-grep-1 (regexp-quote str)))
+    (helm-git-grep-at-point)))
