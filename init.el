@@ -28,8 +28,14 @@
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
-(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-12"))
+(add-to-list 'default-frame-alist '(font . "Monaco-12"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
+
+;; macbook keyboard modifications
+(when (eq system-type 'darwin)
+  (setq ns-function-modifier 'control
+        mac-option-modifier 'control
+        mac-command-modifier 'meta))
 
 ;; common modes
 (tool-bar-mode 0)
@@ -41,6 +47,8 @@
 (electric-pair-mode 1)
 ;(key-chord-mode 1)
 (recentf-mode 1)
+;; make both fringes 4 pixels wide
+(fringe-mode 4)
 
 ;; window navigation
 (windmove-default-keybindings 'meta)
@@ -115,10 +123,10 @@
 ;; fast cursor move
 (avy-setup-default)
 (global-set-key (kbd "C-'") 'avy-goto-word-or-subword-1)
-(setq avy-background nil
-      avy-all-windows 'all-frames)
+(setq avy-all-windows nil) ; this window only
 
 ;; project
+(require 'helm-git-grep) ; because helm-git-grep-1 is not autoloaded
 (global-set-key (kbd "C-c c") 'project/compile)
 (global-set-key (kbd "C-c f") 'helm-git-files)
 (global-set-key (kbd "C-c g") 'project/git-grep)
@@ -179,7 +187,7 @@
                              (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
 ;; js
-;; npm install eslint babel-eslint eslint-plugin-react
+;; npm install eslint babel-eslint eslint-plugin-react eslint-plugin-babel
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . web-mode))
 (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
 (add-hook 'web-mode-hook 'skewer-mode)
@@ -190,10 +198,11 @@
             (flycheck-add-mode 'javascript-eslint 'web-mode)
             (setq flycheck-eslintrc "~/.emacs.d/.eslintrc")
             ))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (local-set-key (kbd "M-,") 'buffer/tag-region)))
 
 ;; C++
-;;(load-file (concat pkg-root "cedet/common/cedet.el"))
-;;(add-hook 'c-mode-common-hook 'isharov/cedet-hook)
 (add-hook 'c-mode-common-hook
           (lambda ()
             (local-set-key (kbd "C-x t") 'isharov/toggle-source)
@@ -474,6 +483,22 @@
           (with-current-buffer buffer
             (funcall fn)))
         (buffer-list)))
+
+(defun buffer/tag-region (tag)
+  "'tag' a region"
+  (interactive "stag: ")
+  (if (use-region-p)
+      (let ((b (region-beginning))
+            (e (region-end)))
+        (save-excursion
+          (goto-char e)
+          (insert (format "</%s>" tag))
+          (goto-char b)
+          (insert (format "<%s>" tag))))
+    (progn
+      (save-excursion
+        (insert (format "</%s>" tag)))
+      (insert (format "<%s>" tag)))))
 
 (defun comint/write-history-on-exit (process event)
   (comint-write-input-ring)
