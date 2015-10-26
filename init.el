@@ -187,8 +187,9 @@
                              (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
 ;; js
-;; npm install eslint babel-eslint eslint-plugin-react eslint-plugin-babel
+;; npm install -g eslint babel-eslint eslint-plugin-react eslint-plugin-babel
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
 (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
 (add-hook 'web-mode-hook 'skewer-mode)
 (add-hook 'css-mode-hook 'skewer-css-mode)
@@ -321,8 +322,11 @@
 (defun isharov/select-current-line ()
   "Select the current line."
   (interactive)
-  (end-of-line)
-  (set-mark (line-beginning-position)))
+  (if (not (use-region-p))
+      (progn
+        (set-mark (line-end-position))
+        (back-to-indentation))
+    (beginning-of-line)))
 
 (defun tag/compile-gtags ()
   (interactive)
