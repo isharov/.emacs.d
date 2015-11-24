@@ -287,6 +287,19 @@
 (add-hook 'kill-emacs-hook 'comint/write-input-ring-all-buffers)
 (define-key shell-mode-map (kbd "M-r") 'helm-comint-input-ring)
 
+;; org
+(eval-after-load "org"
+  '(progn
+     (define-key org-mode-map [M-left] nil)
+     (define-key org-mode-map [M-right] nil)
+     (define-key org-mode-map [M-up] nil)
+     (define-key org-mode-map [M-down] nil)
+     (define-key org-mode-map [C-left] 'org-metaleft)
+     (define-key org-mode-map [C-right] 'org-metaright)
+     (define-key org-mode-map [C-up] 'org-metaup)
+     (define-key org-mode-map [C-down] 'org-metadown)
+     ))
+
 
 (defun isharov/cvs-status ()
   (interactive)
@@ -334,8 +347,7 @@
 
 (defun tag/compile-etags ()
   (interactive)
-  (cd (project/root))
-  (compile "find -regex '.*\\.\\(c\\|cpp\\|h\\|hpp\\|java\\|scala\\|py\\)$' -print | etags -"))
+  (compile (format "find -E %s -regex '.*\\.(c|cpp|h|hpp|java|scala|py)$' -print | etags -o %s -" (project/root) (path/join (project/root) "TAGS"))))
 
 (defun tag/find-tag ()
   (interactive)
