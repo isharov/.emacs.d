@@ -122,13 +122,13 @@
 
 ;; fast cursor move
 (avy-setup-default)
-(global-set-key (kbd "C-'") 'avy-goto-word-or-subword-1)
+(global-set-key (kbd "C-'") 'avy-goto-char-timer)
 (setq avy-all-windows nil) ; this window only
 
 ;; project
 (require 'helm-git-grep) ; because helm-git-grep-1 is not autoloaded
 (global-set-key (kbd "C-c c") 'project/compile)
-(global-set-key (kbd "C-c f") 'helm-git-files)
+(global-set-key (kbd "C-c f") 'helm-ls-git-ls)
 (global-set-key (kbd "C-c g") 'project/git-grep)
 (define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
 (eval-after-load 'helm
@@ -592,4 +592,4 @@
   (if (use-region-p)
       (let ((str (buffer-substring-no-properties (region-beginning) (region-end))))
         (helm-git-grep-1 (regexp-quote str)))
-    (helm-git-grep-at-point)))
+    (helm-git-grep-at-point (region-beginning) (region-end))))
