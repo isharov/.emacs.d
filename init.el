@@ -587,9 +587,13 @@
     (grep-compute-defaults)
     (rgrep term "*" (project/root))))
 
+;; helm-git-grep-at-point is good, but it doesn't do regexp-quote for now
 (defun project/git-grep ()
   (interactive)
   (if (use-region-p)
       (let ((str (buffer-substring-no-properties (region-beginning) (region-end))))
         (helm-git-grep-1 (regexp-quote str)))
-    (helm-git-grep-at-point (region-beginning) (region-end))))
+    (let ((sym (symbol-at-point)))
+      (if sym
+          (helm-git-grep-1 (regexp-quote (symbol-name sym)))
+        (helm-git-grep)))))
