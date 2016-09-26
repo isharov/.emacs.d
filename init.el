@@ -1,6 +1,8 @@
 ;; package --- My init.el
 ;;; Commentary:
 ;;; Code:
+
+(package-initialize)
 (setq pkg-root "~/.emacs.d/el-get/")
 
 ;; el-get
@@ -30,6 +32,7 @@
               show-trailing-whitespace nil)
 (add-to-list 'default-frame-alist '(font . "Monaco-12"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
+(customize-set-variable 'blink-cursor-mode nil)
 
 ;; macbook keyboard modifications
 (when (eq system-type 'darwin)
@@ -47,8 +50,7 @@
 (electric-pair-mode 1)
 ;(key-chord-mode 1)
 (recentf-mode 1)
-;; make both fringes 4 pixels wide
-(fringe-mode 4)
+(global-eldoc-mode 0) ; It works bad with Python for now
 
 ;; window navigation
 (windmove-default-keybindings 'meta)
@@ -178,13 +180,13 @@
 (setq password-cache-expiry nil)
 
 ;; scala
-(require 'scala-mode2)
-(add-hook 'scala-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-c C-r")
-                           (lambda()
-                             (interactive)
-                             (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
+;(require 'scala-mode2)
+;(add-hook 'scala-mode-hook
+;          (lambda ()
+;            (local-set-key (kbd "C-c C-r")
+;                           (lambda()
+;                             (interactive)
+;                             (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
 ;; js
 ;; npm install -g eslint babel-eslint eslint-plugin-react eslint-plugin-babel
@@ -214,11 +216,11 @@
 ;; Python
 (setq
  python-shell-interpreter "ipython"
- python-shell-prompt-regexp "In \\[[0-9]+\\]: "
- python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
- python-shell-completion-setup-code "from IPython.core.completerlib import module_completion"
- python-shell-completion-module-string-code "';'.join(module_completion('''%s'''))\n"
- python-shell-completion-string-code "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"
+ ; python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+ ; python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+ ; python-shell-completion-setup-code "from IPython.core.completerlib import module_completion"
+ ; python-shell-completion-module-string-code "';'.join(module_completion('''%s'''))\n"
+ ; python-shell-completion-string-code "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"
  venv-location "~/.virtualenvs/")
 (add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
 (add-to-list 'auto-mode-alist '("SConscript" . python-mode))
@@ -228,8 +230,9 @@
             (add-to-list 'python-shell-setup-codes 'python-shell-directory)
             (local-set-key (kbd "C-c C-v") 'python/check)
             (local-set-key (kbd "C-c V") 'python/check-dir)
-            (local-set-key (kbd "C-c C-z") (python/with-project 'python-shell-switch-to-shell))
-            (local-set-key (kbd "C-c C-c") (python/with-project 'python-shell-send-buffer))
+            (local-set-key (kbd "C-c C-p") (python/with-project 'run-python))
+            ;(local-set-key (kbd "C-c C-z") (python/with-project 'python-shell-switch-to-shell))
+            ;(local-set-key (kbd "C-c C-c") (python/with-project 'python-shell-send-buffer))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             ))
 (add-hook 'inferior-python-mode-hook
@@ -254,9 +257,7 @@
 (global-set-key (kbd "C-x v s") 'git-gutter:stage-hunk)
 (global-set-key (kbd "C-x v r") 'git-gutter:revert-hunk)
 (global-set-key (kbd "C-c v g") 'magit-status)
-(add-to-list 'git-gutter:update-hooks 'magit-revert-buffer-hook)
-(add-to-list 'git-gutter:update-commands 'previous-buffer)
-(add-to-list 'git-gutter:update-commands 'next-buffer)
+(add-hook 'magit-post-refresh-hook 'git-gutter:update-all-windows)
 (setq magit-last-seen-setup-instructions "1.4.0")
 
 ;; cvs
