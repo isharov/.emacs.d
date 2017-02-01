@@ -69,6 +69,9 @@
 ;; auto-delete trailing whitespace
 (add-hook 'write-file-hooks 'delete-trailing-whitespace)
 
+;; prefer ibuffer
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 ;; helm mode
 (helm-mode 1)
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -191,7 +194,7 @@
 ;; js
 ;; npm install -g eslint babel-eslint eslint-plugin-react eslint-plugin-babel
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+;(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
 (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
 (add-hook 'web-mode-hook 'skewer-mode)
 (add-hook 'css-mode-hook 'skewer-css-mode)
@@ -203,7 +206,9 @@
             ))
 (add-hook 'web-mode-hook
           (lambda ()
-            (local-set-key (kbd "M-,") 'buffer/tag-region)))
+            (local-set-key (kbd "M-,") 'buffer/tag-region)
+            (setq-local electric-pair-pairs (append electric-pair-pairs '((?' . ?'))))
+            ))
 
 ;; C++
 (add-hook 'c-mode-common-hook
