@@ -2,21 +2,19 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
-(setq pkg-root "~/.emacs.d/el-get/")
 
-;; el-get
-(add-to-list 'load-path (concat pkg-root "el-get"))
-
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
-
-(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
-(el-get 'sync)
+(custom-set-variables
+ '(blink-cursor-mode nil)
+ '(package-selected-packages
+   (quote (web-mode virtualenvwrapper smart-forward restclient multiple-cursors magit git-gutter
+           ggtags flycheck expand-region dsvn dockerfile-mode zenburn-theme buffer-move
+           avy helm helm-git-grep helm-ls-git helm-swoop))))
+(custom-set-faces
+ )
 
 ;; common editor customization
 (setq c-default-style "linux"
@@ -32,7 +30,6 @@
               show-trailing-whitespace nil)
 (add-to-list 'default-frame-alist '(font . "Monaco-12"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
-(customize-set-variable 'blink-cursor-mode nil)
 
 ;; macbook keyboard modifications
 (when (eq system-type 'darwin)
@@ -196,9 +193,6 @@
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . web-mode))
 ;(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
 (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
-(add-hook 'web-mode-hook 'skewer-mode)
-(add-hook 'css-mode-hook 'skewer-css-mode)
-(add-hook 'html-mode-hook 'skewer-html-mode)
 (add-hook 'flycheck-mode-hook
           (lambda ()
             (flycheck-add-mode 'javascript-eslint 'web-mode)
@@ -402,7 +396,7 @@
     (python-check (python/check-command dir))))
 
 (defun python/check-command (path)
-  (format "python -m flake8 --ignore=E501 %s" path))
+  (format "flake8 --ignore=E501 %s" path))
 
 (defun python/with-project (fun)
   (lexical-let ((fun fun))
@@ -521,6 +515,11 @@
       (save-excursion
         (insert (format "</%s>" tag)))
       (insert (format "<%s>" tag)))))
+
+(defun buffer/occur-non-ascii ()
+  "Find any non-ascii characters in the current buffer."
+  (interactive)
+  (occur "[^[:ascii:]]"))
 
 (defun comint/write-history-on-exit (process event)
   (comint-write-input-ring)
