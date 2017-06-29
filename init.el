@@ -7,12 +7,14 @@
              '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
+(eval-when-compile (require 'cl))  ; allow lexical-let macro
+
 (custom-set-variables
  '(blink-cursor-mode nil)
  '(package-selected-packages
    (quote (web-mode virtualenvwrapper smart-forward restclient multiple-cursors magit git-gutter
            ggtags flycheck expand-region dsvn dockerfile-mode zenburn-theme buffer-move
-           avy helm helm-git-grep helm-ls-git helm-swoop))))
+           avy helm helm-git-grep helm-ls-git helm-swoop wgrep))))
 (custom-set-faces
  )
 
@@ -142,6 +144,7 @@
 (global-set-key (kbd "S-M-SPC") 'isharov/select-current-line)
 
 ;; semantic navigation
+(require 'smart-forward)
 (global-set-key (kbd "C-<up>") 'smart-up)
 (global-set-key (kbd "C-<down>") 'smart-down)
 (global-set-key (kbd "C-<left>") 'smart-backward)
@@ -192,7 +195,8 @@
 ;; npm install -g eslint babel-eslint eslint-plugin-react eslint-plugin-babel
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . web-mode))
 ;(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
-(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'"))
+      web-mode-enable-auto-indentation nil)
 (add-hook 'flycheck-mode-hook
           (lambda ()
             (flycheck-add-mode 'javascript-eslint 'web-mode)
