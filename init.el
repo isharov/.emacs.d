@@ -12,9 +12,8 @@
 (custom-set-variables
  '(blink-cursor-mode nil)
  '(package-selected-packages
-   (quote (web-mode virtualenvwrapper smart-forward restclient multiple-cursors magit git-gutter
-           ggtags flycheck expand-region dsvn dockerfile-mode zenburn-theme buffer-move
-           avy helm helm-git-grep helm-ls-git helm-swoop wgrep))))
+   (quote
+    (rjsx-mode wgrep web-mode virtualenvwrapper smart-forward restclient multiple-cursors magit git-gutter ggtags flycheck expand-region dsvn dockerfile-mode zenburn-theme buffer-move avy helm helm-git-grep helm-ls-git helm-swoop))))
 (custom-set-faces
  )
 
@@ -193,19 +192,14 @@
 
 ;; js
 ;; npm install -g eslint babel-eslint eslint-plugin-react eslint-plugin-babel
-(add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . web-mode))
-;(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
-(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'"))
-      web-mode-enable-auto-indentation nil)
-(add-hook 'flycheck-mode-hook
-          (lambda ()
-            (flycheck-add-mode 'javascript-eslint 'web-mode)
-            (setq flycheck-eslintrc "~/.emacs.d/.eslintrc")
-            ))
-(add-hook 'web-mode-hook
+(add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
+(add-hook 'rjsx-mode-hook
           (lambda ()
             (local-set-key (kbd "M-,") 'buffer/tag-region)
-            (setq-local electric-pair-pairs (append electric-pair-pairs '((?' . ?'))))
+            ))
+(add-hook 'flycheck-mode-hook
+          (lambda ()
+            (setq flycheck-eslintrc "~/.emacs.d/.eslintrc")
             ))
 
 ;; C++
@@ -252,7 +246,6 @@
 (require 'magit)
 (require 'git-gutter)
 (global-git-gutter-mode +1)
-;(custom-set-variables '(git-gutter:hide-gutter t))
 (global-set-key (kbd "C-x C-g") 'git-gutter-mode)
 (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
 (global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
@@ -261,7 +254,7 @@
 (global-set-key (kbd "C-x v r") 'git-gutter:revert-hunk)
 (global-set-key (kbd "C-c v g") 'magit-status)
 (add-hook 'magit-post-refresh-hook 'git-gutter:update-all-windows)
-(setq magit-last-seen-setup-instructions "1.4.0")
+(setq magit-diff-refine-hunk t)
 
 ;; cvs
 (global-set-key (kbd "C-c v c") 'isharov/cvs-status)
