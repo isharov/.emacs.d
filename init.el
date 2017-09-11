@@ -12,8 +12,11 @@
 (custom-set-variables
  '(blink-cursor-mode nil)
  '(package-selected-packages
-   (quote
-    (rjsx-mode wgrep web-mode virtualenvwrapper smart-forward restclient multiple-cursors magit git-gutter ggtags flycheck expand-region dsvn dockerfile-mode zenburn-theme buffer-move avy helm helm-git-grep helm-ls-git helm-swoop))))
+   (quote (multiple-cursors wgrep expand-region smart-forward buffer-move avy helm helm-swoop
+           magit git-gutter helm-git-grep helm-ls-git docker docker-tramp dockerfile-mode dsvn
+           ggtags flycheck virtualenvwrapper rjsx-mode web-mode restclient yaml-mode
+           zenburn-theme))
+   ))
 (custom-set-faces
  )
 
