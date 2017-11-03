@@ -9,15 +9,9 @@
 
 (eval-when-compile (require 'cl))  ; allow lexical-let macro
 
-(custom-set-variables
- '(blink-cursor-mode nil)
- '(package-selected-packages
-   (quote
-    (multiple-cursors wgrep expand-region smart-forward buffer-move avy helm helm-swoop helm-ag
-     magit git-gutter helm-ls-git docker docker-tramp dockerfile-mode dsvn
-     ggtags flycheck virtualenvwrapper rjsx-mode web-mode restclient yaml-mode zenburn-theme))))
-(custom-set-faces
- )
+(setq custom-file "~/.emacs.d/custom.el")
+(if (file-exists-p custom-file)
+    (load custom-file))
 
 ;; common editor customization
 (setq c-default-style "linux"
@@ -27,7 +21,8 @@
       kill-whole-line t
       recentf-max-saved-items 500
       enable-recursive-minibuffers t
-      scroll-preserve-screen-position 'always)
+      scroll-preserve-screen-position 'always
+      blink-cursor-mode nil)
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
@@ -101,9 +96,8 @@
 
 ;; helm-ag
 (global-set-key (kbd "C-c g") 'project/ag)
-(custom-set-variables
- '(helm-ag-base-command "ag --nocolor --nogroup --ignore-case --ignore=TAGS")
- '(helm-ag-insert-at-point 'symbol))
+(setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case --ignore=TAGS"
+      helm-ag-insert-at-point 'symbol)
 
 ;; helm-ls-git
 (global-set-key (kbd "C-c f") 'helm-ls-git-ls)
