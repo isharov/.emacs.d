@@ -12,11 +12,10 @@
 (custom-set-variables
  '(blink-cursor-mode nil)
  '(package-selected-packages
-   (quote (multiple-cursors wgrep expand-region smart-forward buffer-move avy helm helm-swoop
-           magit git-gutter helm-git-grep helm-ls-git docker docker-tramp dockerfile-mode dsvn
-           ggtags flycheck virtualenvwrapper rjsx-mode web-mode restclient yaml-mode
-           zenburn-theme))
-   ))
+   (quote
+    (multiple-cursors wgrep expand-region smart-forward buffer-move avy helm helm-swoop helm-ag
+     magit git-gutter helm-ls-git docker docker-tramp dockerfile-mode dsvn
+     ggtags flycheck virtualenvwrapper rjsx-mode web-mode restclient yaml-mode zenburn-theme))))
 (custom-set-faces
  )
 
@@ -100,6 +99,15 @@
 (define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
 (define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
 
+;; helm-ag
+(global-set-key (kbd "C-c g") 'project/ag)
+(custom-set-variables
+ '(helm-ag-base-command "ag --nocolor --nogroup --ignore-case --ignore=TAGS")
+ '(helm-ag-insert-at-point 'symbol))
+
+;; helm-ls-git
+(global-set-key (kbd "C-c f") 'helm-ls-git-ls)
+
 ;; dired
 (setq dired-recursive-copies 'always)
 (setq dired-recursive-deletes 'always)
@@ -130,15 +138,6 @@
 (avy-setup-default)
 (global-set-key (kbd "C-'") 'avy-goto-char-timer)
 (setq avy-all-windows nil) ; this window only
-
-;; project
-(require 'helm-git-grep) ; because helm-git-grep-1 is not autoloaded
-(global-set-key (kbd "C-c c") 'project/compile)
-(global-set-key (kbd "C-c f") 'helm-ls-git-ls)
-(global-set-key (kbd "C-c g") 'project/git-grep)
-(define-key isearch-mode-map (kbd "C-c g") 'helm-git-grep-from-isearch)
-(eval-after-load 'helm
-  '(define-key helm-map (kbd "C-c g") 'helm-git-grep-from-helm))
 
 ;; text selection
 (require 'expand-region)
@@ -183,6 +182,8 @@
 
 ;; tramp mode
 (setq password-cache-expiry nil)
+(require 'docker-tramp-compat)  ; Fix tramp hangs on Alpine container. TODO: remove if tramp>=2.3.
+;(eval-after-load 'tramp '(setenv "SHELL" "/bin/sh"))  ; no bash on alpine
 
 ;; scala
 ;(require 'scala-mode2)
@@ -585,20 +586,6 @@
   (interactive)
   (project/with-root (call-interactively 'compile)))
 
-(defun project/rgrep ()
-  "Recursive grep search"
+(defun project/ag ()
   (interactive)
-  (let ((term (completing-read "rgrep: " nil nil nil (thing-at-point 'word))))
-    (grep-compute-defaults)
-    (rgrep term "*" (project/root))))
-
-;; helm-git-grep-at-point is good, but it doesn't do regexp-quote for now
-(defun project/git-grep ()
-  (interactive)
-  (if (use-region-p)
-      (let ((str (buffer-substring-no-properties (region-beginning) (region-end))))
-        (helm-git-grep-1 (regexp-quote str)))
-    (let ((sym (symbol-at-point)))
-      (if sym
-          (helm-git-grep-1 (regexp-quote (symbol-name sym)))
-        (helm-git-grep)))))
+  (helm-do-ag (project/root)))
