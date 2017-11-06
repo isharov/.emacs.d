@@ -21,13 +21,13 @@
       kill-whole-line t
       recentf-max-saved-items 500
       enable-recursive-minibuffers t
-      scroll-preserve-screen-position 'always
-      blink-cursor-mode nil)
+      scroll-preserve-screen-position 'always)
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
 (add-to-list 'default-frame-alist '(font . "Monaco-12"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
+(blink-cursor-mode -1)
 
 ;; macbook keyboard modifications
 (when (eq system-type 'darwin)
@@ -177,7 +177,6 @@
 ;; tramp mode
 (setq password-cache-expiry nil)
 (require 'docker-tramp-compat)  ; Fix tramp hangs on Alpine container. TODO: remove if tramp>=2.3.
-;(eval-after-load 'tramp '(setenv "SHELL" "/bin/sh"))  ; no bash on alpine
 
 ;; scala
 ;(require 'scala-mode2)
@@ -239,6 +238,13 @@
           (lambda ()
             (setq flycheck-flake8rc "~/.emacs.d/.flake8rc")
             ))
+
+;; go
+(add-hook 'go-mode-hook
+          (lambda ()
+            (gorepl-mode)
+            (setq go-playground-basedir
+                  (path/join (or (getenv "GOPATH") "~/.go") "src/playground"))))
 
 ;; git
 (require 'magit)
