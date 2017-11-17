@@ -211,14 +211,8 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ; using c++ mode for *.h files
 
 ;; Python
-(setq
- python-shell-interpreter "ipython"
- ; python-shell-prompt-regexp "In \\[[0-9]+\\]: "
- ; python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
- ; python-shell-completion-setup-code "from IPython.core.completerlib import module_completion"
- ; python-shell-completion-module-string-code "';'.join(module_completion('''%s'''))\n"
- ; python-shell-completion-string-code "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"
- venv-location "~/.virtualenvs/")
+(setq python-shell-interpreter "ipython"
+      venv-location "~/.virtualenvs/")
 (add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
 (add-to-list 'auto-mode-alist '("SConscript" . python-mode))
 (add-hook 'python-mode-hook
@@ -228,9 +222,8 @@
             (local-set-key (kbd "C-c C-v") 'python/check)
             (local-set-key (kbd "C-c V") 'python/check-dir)
             (local-set-key (kbd "C-c C-p") (python/with-project 'run-python))
-            ;(local-set-key (kbd "C-c C-z") (python/with-project 'python-shell-switch-to-shell))
-            ;(local-set-key (kbd "C-c C-c") (python/with-project 'python-shell-send-buffer))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
+            (set (make-local-variable 'company-backends) '(company-jedi))
             ))
 (add-hook 'inferior-python-mode-hook
           (lambda ()
