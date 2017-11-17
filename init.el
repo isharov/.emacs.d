@@ -79,7 +79,6 @@
 (global-set-key (kbd "C-x c o") 'helm-occur)
 (global-set-key (kbd "C-x c a") 'helm-apropos)
 (global-set-key (kbd "C-x c b") 'helm-resume)
-(global-set-key (kbd "M-?") 'helm-dabbrev)
 (define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
 (add-to-list 'desktop-globals-to-save 'extended-command-history)
 (setq helm-split-window-in-side-p t)
@@ -101,6 +100,10 @@
 
 ;; helm-ls-git
 (global-set-key (kbd "C-c f") 'helm-ls-git-ls)
+
+;; company
+(add-hook 'after-init-hook 'global-company-mode)
+(global-set-key (kbd "M-?") 'company-complete)
 
 ;; dired
 (setq dired-recursive-copies 'always)
@@ -242,6 +245,7 @@
 ;; go
 (add-hook 'go-mode-hook
           (lambda ()
+            (set (make-local-variable 'company-backends) '(company-go))
             (gorepl-mode)
             (setq go-playground-basedir
                   (path/join (or (getenv "GOPATH") "~/.go") "src/playground"))))
