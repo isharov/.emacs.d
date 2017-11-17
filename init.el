@@ -276,12 +276,7 @@
   )
 
 ;; shell
-(add-hook 'shell-mode-hook
-          (lambda ()
-            (setq comint-input-ring-file-name "~/.emacs.d/.shell_history"
-                  comint-input-ignoredups t
-                  comint-input-ring-size 1000)
-            (comint-read-input-ring t)))
+(add-hook 'shell-mode-hook 'comint/turn-on-history)
 ;(add-hook 'shell-mode-hook (lambda () (goto-address-mode)))
 (add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 (add-hook 'kill-buffer-hook 'comint-write-input-ring)
@@ -532,9 +527,10 @@
 (defun comint/turn-on-history ()
   (let ((process (get-buffer-process (current-buffer))))
     (when process
-      (setq comint-input-ring-file-name
-            (format "~/.emacs.d/.inferior-%s-history"
-                    (process-name process)))
+      (setq comint-input-ring-file-name (format "~/.emacs.d/.inferior-%s-history"
+                                                (process-name process))
+            comint-input-ignoredups t
+            comint-input-ring-size 1000)
       (comint-read-input-ring)
       (set-process-sentinel process 'comint/write-history-on-exit))))
 
