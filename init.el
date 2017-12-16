@@ -31,8 +31,9 @@
 
 ;; macbook keyboard modifications
 (when (eq system-type 'darwin)
-  (setq ns-function-modifier 'control
-        mac-option-modifier 'control
+  (setq ns-function-modifier 'control   ; left-control
+        mac-function-modifier 'control  ; left-control
+        mac-option-modifier 'control    ; right-control
         mac-command-modifier 'meta))
 
 ;; common modes
@@ -103,7 +104,6 @@
 
 ;; company
 (add-hook 'after-init-hook 'global-company-mode)
-(global-set-key (kbd "M-?") 'company-complete)
 
 ;; dired
 (setq dired-recursive-copies 'always)
