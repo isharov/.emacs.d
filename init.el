@@ -514,6 +514,11 @@
   (interactive)
   (occur "[^[:ascii:]]"))
 
+(defun buffer/ansi-colorize ()
+  "Colorize ansi escape sequences in the current buffer."
+  (interactive)
+  (ansi-color-apply-on-region (point-min) (point-max)))
+
 (defun comint/write-history-on-exit (process event)
   (comint-write-input-ring)
   (let ((buf (process-buffer process)))
