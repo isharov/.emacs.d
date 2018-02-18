@@ -170,7 +170,7 @@
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
 
 ;; flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(global-flycheck-mode)
 (global-set-key (kbd "C-c c") 'flycheck-mode)
 (add-hook 'flycheck-mode-hook
           (lambda ()
@@ -232,7 +232,10 @@
             ))
 (add-hook 'flycheck-mode-hook
           (lambda ()
-            (setq flycheck-flake8rc "~/.emacs.d/.flake8rc")
+            (setq flycheck-python-flake8-executable "python3"
+                  flycheck-python-pylint-executable "python3"
+                  flycheck-python-pycompile-executable "python3"
+                  flycheck-flake8rc "~/.emacs.d/.flake8rc")
             ))
 
 ;; go
