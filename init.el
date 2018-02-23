@@ -7,8 +7,6 @@
              '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
-(eval-when-compile (require 'cl))  ; allow lexical-let macro
-
 (setq custom-file "~/.emacs.d/custom.el")
 (if (file-exists-p custom-file)
     (load custom-file))
@@ -172,6 +170,7 @@
 ;; flycheck
 (global-flycheck-mode)
 (global-set-key (kbd "C-c c") 'flycheck-mode)
+(global-set-key (kbd "C-c C-v") 'flycheck-list-errors)
 (add-hook 'flycheck-mode-hook
           (lambda ()
             (setq flycheck-checker-error-threshold nil)
@@ -211,17 +210,10 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ; using c++ mode for *.h files
 
 ;; Python
-(setq python-shell-interpreter "ipython"
-      venv-location "~/.virtualenvs/")
-(add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
-(add-to-list 'auto-mode-alist '("SConscript" . python-mode))
+(setq python-shell-interpreter "ipython")
 (add-hook 'python-mode-hook
           (lambda ()
-            (defvar python-shell-directory)
-            (add-to-list 'python-shell-setup-codes 'python-shell-directory)
-            (local-set-key (kbd "C-c C-v") 'python/check)
-            (local-set-key (kbd "C-c V") 'python/check-dir)
-            (local-set-key (kbd "C-c C-p") (python/with-project 'run-python))
+            (local-unset-key (kbd "C-c C-v"))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             (set (make-local-variable 'company-backends) '(company-jedi))
             ))
@@ -380,26 +372,6 @@
                  (tramp-file-name-user vec)
                  (tramp-file-name-host vec))))
     (concat "/sudo:root@localhost:" tempfile)))
-
-(defun python/check ()
-  (interactive)
-  (let ((buf (file-name-nondirectory (buffer-file-name (current-buffer)))))
-    (python-check (python/check-command buf))))
-
-(defun python/check-dir ()
-  (interactive)
-  (let ((dir (read-directory-name "Python check dir: " (project/root))))
-    (python-check (python/check-command dir))))
-
-(defun python/check-command (path)
-  (format "flake8 --ignore=E501 %s" path))
-
-(defun python/with-project (fun)
-  (lexical-let ((fun fun))
-    (lambda ()
-      (interactive)
-      (setq python-shell-directory (format "import os\nos.chdir(os.path.expanduser('%s'))" (project/root)))
-      (funcall fun))))
 
 (defun path/replace-first (str old new)
   (replace-regexp-in-string (concat "\\(/" old "/\\).*\\'")
