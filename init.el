@@ -191,7 +191,7 @@
 ;                             (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
 ;; js
-;; npm install -g eslint babel-eslint eslint-plugin-react eslint-plugin-babel
+;; npm install -g eslint eslint-plugin-react
 (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
 (add-hook 'rjsx-mode-hook
           (lambda ()
@@ -225,10 +225,7 @@
             ))
 (add-hook 'flycheck-mode-hook
           (lambda ()
-            (setq flycheck-python-flake8-executable "python3"
-                  flycheck-python-pylint-executable "python3"
-                  flycheck-python-pycompile-executable "python3"
-                  flycheck-flake8rc "~/.emacs.d/.flake8rc")
+            (setq flycheck-flake8rc "~/.emacs.d/.flake8rc")
             ))
 
 ;; go
@@ -240,7 +237,6 @@
                   (path/join (or (getenv "GOPATH") "~/.go") "src/playground"))))
 
 ;; git
-(require 'magit)
 (global-set-key (kbd "C-c v g") 'magit-status)
 (setq magit-diff-refine-hunk t)
 
