@@ -2,6 +2,8 @@
 ;;; Commentary:
 ;;; Code:
 
+(eval-when-compile (require 'cl))
+
 (require 'package)
 ;(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
@@ -67,30 +69,35 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; helm mode
-(helm-mode 1)
+(require 'helm-config)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
-;(global-set-key (kbd "C-x C-r") 'helm-recentf)
-(global-set-key (kbd "C-x c /") 'helm-find)
-(global-set-key (kbd "C-x c l") 'helm-locate)
-(global-set-key (kbd "C-x c o") 'helm-occur)
-(global-set-key (kbd "C-x c a") 'helm-apropos)
-(global-set-key (kbd "C-x c b") 'helm-resume)
+(global-set-key (kbd "C-x C-r") 'helm-recentf)
+(global-set-key (kbd "C-x r b") 'helm-filtered-bookmarks)
+(global-set-key (kbd "C-x c g") 'helm-google-suggest)
 (define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
 (add-to-list 'desktop-globals-to-save 'extended-command-history)
-(setq helm-split-window-in-side-p t)
+(setq helm-split-window-inside-p t)
+(when (executable-find "curl")
+  (setq helm-net-prefer-curl t))
+(helm-mode 1)
 
 ;; helm-swoop
 (require 'helm-swoop)
 (global-set-key (kbd "M-i") 'helm-swoop)
+(global-set-key (kbd "M-I") 'helm-swoop-back-to-last-point)
+(global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
+(global-set-key (kbd "C-x M-i") 'helm-multi-swoop-all)
 (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
 (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+(define-key helm-swoop-map (kbd "M-m") 'helm-multi-swoop-current-mode-from-helm-swoop)
 (define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
 (define-key helm-swoop-map (kbd "C-s") 'helm-next-line)
 (define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
 (define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
+(setq helm-swoop-split-with-multiple-windows t)
 
 ;; helm-ag
 (global-set-key (kbd "C-c g") 'project/ag)
