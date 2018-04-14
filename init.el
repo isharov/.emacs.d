@@ -199,11 +199,12 @@
 
 ;; js
 ;; npm install -g eslint eslint-plugin-react
-(add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
-(add-hook 'rjsx-mode-hook
+(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+(add-hook 'web-mode-hook
           (lambda ()
             (local-set-key (kbd "M-,") 'buffer/tag-region)
             ))
+(flycheck-add-mode 'javascript-eslint 'web-mode) ;; use eslint with web-mode for jsx files
 (add-hook 'flycheck-mode-hook
           (lambda ()
             (setq flycheck-eslintrc "~/.emacs.d/.eslintrc")
