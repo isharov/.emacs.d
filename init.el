@@ -203,6 +203,7 @@
 (add-hook 'web-mode-hook
           (lambda ()
             (local-set-key (kbd "M-,") 'buffer/tag-region)
+            (setq-local electric-pair-pairs (append electric-pair-pairs '((?' . ?'))))
             ))
 (flycheck-add-mode 'javascript-eslint 'web-mode) ;; use eslint with web-mode for jsx files
 (add-hook 'flycheck-mode-hook
