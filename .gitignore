@@ -3,9 +3,8 @@
 session.*
 .*history
 tramp
-el-get/
 elpa/
+pkgs/
 auto-save-list/
 url/
 recentf
-.python-environments/
