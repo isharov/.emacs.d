@@ -111,8 +111,6 @@
 
 ;; company
 (add-hook 'after-init-hook 'global-company-mode)
-(require 'company-lsp)
-(push 'company-lsp company-backends)
 
 ;; dired
 (setq dired-recursive-copies 'always)
@@ -165,6 +163,9 @@
 (global-set-key (kbd "M-)") 'delete-pair)
 
 ;; lsp
+(require 'company-lsp)
+(push 'company-lsp company-backends)
+
 (require 'lsp-ui)
 (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
@@ -232,12 +233,12 @@
             ))
 
 ;; go
-(add-hook 'go-mode-hook
-          (lambda ()
-            (set (make-local-variable 'company-backends) '(company-go))
-            (gorepl-mode)
-            (setq go-playground-basedir
-                  (path/join (or (getenv "GOPATH") "~/.go") "src/playground"))))
+(require 'lsp-go)
+(add-hook 'go-mode-hook #'lsp-go-enable)
+
+;(require 'flycheck-gometalinter)
+;(eval-after-load 'flycheck
+;  '(add-hook 'flycheck-mode-hook #'flycheck-gometalinter-setup))
 
 ;; git
 (global-set-key (kbd "C-c v g") 'magit-status)
