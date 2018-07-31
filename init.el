@@ -5,6 +5,7 @@
 (load "~/.emacs.d/helpers")
 
 (require 'package)
+;(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
 (package-initialize)
 
@@ -233,6 +234,9 @@
             ))
 
 ;; go
+;; go get -u github.com/sourcegraph/go-langserver
+;; go get -u github.com/alecthomas/gometalinter
+;; gometalinter --install --update
 (require 'lsp-go)
 (add-hook 'go-mode-hook #'lsp-go-enable)
 
@@ -248,9 +252,6 @@
 (diff-hl-flydiff-mode)
 (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
 
-;; cvs
-(global-set-key (kbd "C-c v c") 'isharov/cvs-status)
-
 ;; svn
 (require 'dsvn)
 (global-set-key (kbd "C-c v s") 'isharov/svn-status)
@@ -258,9 +259,6 @@
 ;; color-theme
 (when (window-system)
   (load-theme 'zenburn t)
-  ;(zenburn-with-color-variables
-  ;  (set-face-attribute 'diff-refine-added nil :background zenburn-bg+2)
-  ;  (set-face-attribute 'diff-refine-removed nil :background zenburn-bg+2))
   )
 
 ;; shell
@@ -283,3 +281,9 @@
      (define-key org-mode-map [C-up] 'org-metaup)
      (define-key org-mode-map [C-down] 'org-metadown)
      ))
+
+;; restclient.el
+(require 'restclient)
+
+(provide 'init)
+;;; init.el ends here
