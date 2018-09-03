@@ -19,12 +19,14 @@
 ;; common editor customization
 (setq c-default-style "linux"
       c-basic-offset 4
-      backup-inhibited t
       require-final-newline t
       kill-whole-line t
-      recentf-max-saved-items 500
+      recentf-max-saved-items 5000
       enable-recursive-minibuffers t
-      scroll-preserve-screen-position 'always)
+      scroll-preserve-screen-position 'always
+      auto-save-default nil
+      make-backup-files nil
+      create-lockfiles nil)
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
@@ -104,7 +106,7 @@
 
 ;; helm-ag
 (global-set-key (kbd "C-c g") 'project/ag)
-(setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case --ignore=TAGS"
+(setq helm-ag-base-command "ag --hidden --nocolor --nogroup --ignore-case --ignore=TAGS"
       helm-ag-insert-at-point 'symbol)
 
 ;; helm-ls-git
