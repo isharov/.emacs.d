@@ -5,8 +5,8 @@
 (load "~/.emacs.d/helpers")
 
 (require 'package)
-;(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+;(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
 (package-initialize)
 
 (setq custom-file "~/.emacs.d/custom.el")
@@ -260,7 +260,7 @@
 
 ;; color-theme
 (when (window-system)
-  (load-theme 'zenburn t)
+  (load-theme 'spacemacs-dark t)
   )
 
 ;; shell
