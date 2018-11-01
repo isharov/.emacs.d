@@ -106,7 +106,7 @@
 
 ;; helm-ag
 (global-set-key (kbd "C-c g") 'project/ag)
-(setq helm-ag-base-command "ag --hidden --nocolor --nogroup --ignore-case --ignore=TAGS"
+(setq helm-ag-base-command "ag --hidden --nocolor --nogroup --ignore-case --ignore=.git --ignore=.svn"
       helm-ag-insert-at-point 'symbol)
 
 ;; helm-ls-git
@@ -222,6 +222,7 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ; using c++ mode for *.h files
 
 ;; python
+;; pip install --upgrade python-language-server
 (require 'lsp-python)
 (add-hook 'python-mode-hook
           (lambda ()
