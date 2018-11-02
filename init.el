@@ -158,6 +158,10 @@
 (global-set-key (kbd "C-<left>") 'smart-backward)
 (global-set-key (kbd "C-<right>") 'smart-forward)
 
+;; text moving
+(global-set-key (kbd "<M-S-up>") 'move-text-up)
+(global-set-key (kbd "<M-S-down>") 'move-text-down)
+
 ;; handy pairs
 (global-set-key (kbd "M-[") 'insert-pair)
 (global-set-key (kbd "M-{") 'insert-pair)
