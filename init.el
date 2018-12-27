@@ -170,8 +170,9 @@
 (global-set-key (kbd "M-)") 'delete-pair)
 
 ;; lsp
-(require 'company-lsp)
-(push 'company-lsp company-backends)
+(require 'lsp)
+(require 'lsp-clients)
+(setq lsp-prefer-flymake nil)
 
 (require 'lsp-ui)
 (add-hook 'lsp-mode-hook 'lsp-ui-mode)
@@ -227,10 +228,9 @@
 
 ;; python
 ;; pip install --upgrade python-language-server
-(require 'lsp-python)
+(add-hook 'python-mode-hook 'lsp)
 (add-hook 'python-mode-hook
           (lambda ()
-            (lsp-python-enable)
             (local-unset-key (kbd "C-c C-v"))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             ))
@@ -239,13 +239,19 @@
             (comint/turn-on-history)
             (define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
             ))
+;(add-hook 'flycheck-mode-hook
+;          (lambda ()
+;            (setq flycheck-python-flake8-executable "python3"
+;                  flycheck-python-pylint-executable "python3"
+;                  flycheck-python-pycompile-executable "python3"
+;                  flycheck-flake8rc "~/.config/flake8")
+;            ))
 
 ;; go
 ;; go get -u github.com/sourcegraph/go-langserver
 ;; go get -u github.com/alecthomas/gometalinter
 ;; gometalinter --install --update
-(require 'lsp-go)
-(add-hook 'go-mode-hook #'lsp-go-enable)
+(add-hook 'go-mode-hook 'lsp)
 
 ;(require 'flycheck-gometalinter)
 ;(eval-after-load 'flycheck
