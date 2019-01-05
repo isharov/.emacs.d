@@ -195,7 +195,9 @@
 
 ;; tramp mode
 (setq password-cache-expiry nil)
-(require 'docker-tramp-compat)  ; Fix tramp hangs on Alpine container. TODO: remove if tramp>=2.3.
+
+;; docker
+(global-set-key (kbd "C-c d") 'docker)
 
 ;; scala
 ;(require 'scala-mode2)
