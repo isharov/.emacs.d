@@ -283,6 +283,12 @@
 (add-hook 'kill-buffer-hook 'comint-write-input-ring)
 (add-hook 'kill-emacs-hook 'comint/write-input-ring-all-buffers)
 (define-key shell-mode-map (kbd "M-r") 'helm-comint-input-ring)
+(setq
+ comint-input-ignoredups t           ; no duplicates in command history
+ ;comint-completion-addsuffix t      ; insert space/slash after file completion
+ comint-get-old-input (lambda () "") ; what to run when i press enter on a line above the current prompt
+ comint-input-ring-size 5000         ; max shell history size
+)
 
 ;; org
 (eval-after-load "org"
