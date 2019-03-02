@@ -305,6 +305,8 @@
 
 ;; restclient.el
 (require 'restclient)
+;(setq tls-program '("gnutls-cli --insecure --x509cafile %t -p %p %h" "gnutls-cli --insecure --x509cafile %t -p %p %h --protocols ssl3"))
+;(custom-reevaluate-setting 'tls-program)
 
 (provide 'init)
 ;;; init.el ends here
