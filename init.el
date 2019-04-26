@@ -229,7 +229,7 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ; using c++ mode for *.h files
 
 ;; python
-;; pip install --upgrade python-language-server
+;; pip install -U python-language-server
 (add-hook 'python-mode-hook 'lsp)
 (add-hook 'python-mode-hook
           (lambda ()

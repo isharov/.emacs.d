@@ -2,9 +2,11 @@
 .mc-lists.*
 session.*
 .*history
+.lsp-session*
 tramp
 elpa/
 pkgs/
 auto-save-list/
 url/
 recentf
+transient/
