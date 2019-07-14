@@ -68,7 +68,11 @@
 (put 'erase-buffer 'disabled nil)
 
 ;; auto-delete trailing whitespace
-(add-hook 'write-file-hooks 'delete-trailing-whitespace)
+(add-hook 'write-file-hooks
+          (lambda ()
+            (when (not (derived-mode-p 'markdown-mode))  ; trailing whitespaces are meaningful in markdown
+              (delete-trailing-whitespace)
+              )))
 
 ;; prefer ibuffer
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -230,7 +234,7 @@
 
 ;; python
 ;; pip install -U python-language-server
-(add-hook 'python-mode-hook 'lsp)
+;(add-hook 'python-mode-hook 'lsp)
 (add-hook 'python-mode-hook
           (lambda ()
             (local-unset-key (kbd "C-c C-v"))
@@ -241,13 +245,13 @@
             (comint/turn-on-history)
             (define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
             ))
-;(add-hook 'flycheck-mode-hook
-;          (lambda ()
-;            (setq flycheck-python-flake8-executable "python3"
-;                  flycheck-python-pylint-executable "python3"
-;                  flycheck-python-pycompile-executable "python3"
-;                  flycheck-flake8rc "~/.config/flake8")
-;            ))
+(add-hook 'flycheck-mode-hook
+          (lambda ()
+            (setq flycheck-python-flake8-executable "python3"
+                  flycheck-python-pylint-executable "python3"
+                  flycheck-python-pycompile-executable "python3"
+                  flycheck-flake8rc "~/.config/flake8")
+            ))
 
 ;; go
 ;; go get -u github.com/sourcegraph/go-langserver
