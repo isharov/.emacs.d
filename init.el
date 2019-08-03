@@ -239,6 +239,8 @@
           (lambda ()
             (local-unset-key (kbd "C-c C-v"))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
+            (local-set-key (kbd "C-c C-b") (lambda () (interactive) (buffer/shell-command "black")))
+            (local-set-key (kbd "C-c C-s") (lambda () (interactive) (buffer/shell-command "isort")))
             ))
 (add-hook 'inferior-python-mode-hook
           (lambda ()

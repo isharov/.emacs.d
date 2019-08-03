@@ -187,6 +187,13 @@
   (interactive)
   (ansi-color-apply-on-region (point-min) (point-max)))
 
+(defun buffer/shell-command (&optional cmd)
+  "Do shel command on current buffer file"
+  (interactive "P")
+  (when (not cmd)
+    (setq cmd (read-from-minibuffer "Command: ")))
+  (shell-command (format "%s %s" cmd (shell-quote-argument buffer-file-name))))
+
 (defun comint/write-history-on-exit (process event)
   (comint-write-input-ring)
   (let ((buf (process-buffer process)))
@@ -197,8 +204,7 @@
 (defun comint/turn-on-history ()
   (let ((process (get-buffer-process (current-buffer))))
     (when process
-      (setq comint-input-ring-file-name (format "~/.emacs.d/.inferior-%s-history"
-                                                (process-name process))
+      (setq comint-input-ring-file-name (format "~/.emacs.d/.inferior-%s-history" (process-name process))
             comint-input-ignoredups t
             comint-input-ring-size 1000)
       (comint-read-input-ring)
