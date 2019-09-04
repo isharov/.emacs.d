@@ -295,6 +295,11 @@
  comint-get-old-input (lambda () "") ; what to run when i press enter on a line above the current prompt
  comint-input-ring-size 5000         ; max shell history size
 )
+; company completion would stuck on slow tramp connection
+(add-hook 'shell-mode-hook
+          (lambda ()
+            (if (file-remote-p (path/current-dir))
+                (company-mode -1))))
 
 ;; org
 (eval-after-load "org"
