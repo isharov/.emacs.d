@@ -234,7 +234,7 @@
 
 ;; python
 ;; pip install -U python-language-server
-;(add-hook 'python-mode-hook 'lsp)
+;(add-hook 'python-mode-hook #'lsp-deferred)
 (add-hook 'python-mode-hook
           (lambda ()
             (local-unset-key (kbd "C-c C-v"))
@@ -256,14 +256,8 @@
             ))
 
 ;; go
-;; go get -u github.com/sourcegraph/go-langserver
-;; go get -u github.com/alecthomas/gometalinter
-;; gometalinter --install --update
-(add-hook 'go-mode-hook 'lsp)
-
-;(require 'flycheck-gometalinter)
-;(eval-after-load 'flycheck
-;  '(add-hook 'flycheck-mode-hook #'flycheck-gometalinter-setup))
+;; GO111MODULE=on go get golang.org/x/tools/gopls@latest
+(add-hook 'go-mode-hook #'lsp-deferred)
 
 ;; git
 (global-set-key (kbd "C-c v g") 'magit-status)
