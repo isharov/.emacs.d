@@ -215,9 +215,10 @@
 ;; js
 ;; npm install -g eslint eslint-plugin-react
 (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
-(add-hook 'rjsx-mode
+(add-hook 'rjsx-mode-hook
           (lambda ()
             (local-set-key (kbd "M-,") 'buffer/tag-region)
+            (setq-default sgml-basic-offset 4)
             ))
 (add-hook 'flycheck-mode-hook
           (lambda ()
