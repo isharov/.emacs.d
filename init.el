@@ -30,7 +30,7 @@
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
-(add-to-list 'default-frame-alist '(font . "Monaco-12"))
+(add-to-list 'default-frame-alist '(font . "Victor Mono"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
 
@@ -275,6 +275,7 @@
 ;; color-theme
 (when (window-system)
   (load-theme 'spacemacs-dark t)
+  (set-face-italic 'font-lock-comment-face 1)
   )
 
 ;; shell
