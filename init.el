@@ -174,7 +174,7 @@
 (global-set-key (kbd "M-)") 'delete-pair)
 
 ;; lsp
-(require 'lsp)
+(require 'lsp-mode)
 (require 'lsp-clients)
 (setq lsp-prefer-flymake nil)
 
