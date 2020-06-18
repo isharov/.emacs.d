@@ -261,3 +261,10 @@
 (defun project/ag ()
   (interactive)
   (helm-do-ag (project/root)))
+
+(defun theme/reload ()
+  (interactive)
+  (disable-theme 'spacemacs-dark)
+  (load-theme 'spacemacs-dark t)
+  (set-face-italic 'font-lock-comment-face 1)
+  )
