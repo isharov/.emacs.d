@@ -23,6 +23,8 @@
       kill-whole-line t
       recentf-max-saved-items 5000
       enable-recursive-minibuffers t
+      history-delete-duplicates t
+      history-length 100
       scroll-preserve-screen-position 'always
       auto-save-default nil
       make-backup-files nil
