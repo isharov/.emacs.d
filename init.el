@@ -58,6 +58,10 @@
 (recentf-mode 1)
 (global-eldoc-mode 0) ; It works bad with Python for now
 
+;; Avoid performance issues in files with very long lines.
+(global-so-long-mode 1)
+(setq bidi-inhibit-bpa t)
+
 ;; window navigation
 (windmove-default-keybindings 'meta)
 ;(setq windmove-wrap-around t)
