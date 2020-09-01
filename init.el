@@ -52,7 +52,6 @@
 (scroll-bar-mode -1)
 (global-auto-revert-mode t)
 (show-paren-mode 1)
-(desktop-save-mode 1)
 (electric-pair-mode 1)
 ;(key-chord-mode 1)
 (recentf-mode 1)
@@ -96,7 +95,7 @@
 (global-set-key (kbd "C-x r b") 'helm-filtered-bookmarks)
 (global-set-key (kbd "C-x c g") 'helm-google-suggest)
 (define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
-(add-to-list 'desktop-globals-to-save 'extended-command-history)
+
 (setq helm-split-window-inside-p t)
 (when (executable-find "curl")
   (setq helm-net-prefer-curl t))
@@ -322,6 +321,21 @@
 (require 'restclient)
 ;(setq tls-program '("gnutls-cli --insecure --x509cafile %t -p %p %h" "gnutls-cli --insecure --x509cafile %t -p %p %h --protocols ssl3"))
 ;(custom-reevaluate-setting 'tls-program)
+
+;; setup default desktop
+(setq inhibit-startup-screen t)
+(toggle-frame-maximized)
+(split-window-vertically)
+(split-window-horizontally)
+(windmove-down)
+(split-window-horizontally)
+(windmove-up)
+(find-file "~/dev/authasas/aucore/notes.org")
+(magit-status)
+(shell)
+(insert "cd AuCore/app")
+(execute-kbd-macro "\C-m")
+(buf-move-left)
 
 (provide 'init)
 ;;; init.el ends here
