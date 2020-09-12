@@ -287,8 +287,9 @@
 
 ;; shell
 (add-hook 'shell-mode-hook 'comint/turn-on-history)
+(add-hook 'shell-mode-hook 'buffer-disable-undo)
 ;(add-hook 'shell-mode-hook (lambda () (goto-address-mode)))
-(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
+;(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 (add-hook 'kill-buffer-hook 'comint-write-input-ring)
 (add-hook 'kill-emacs-hook 'comint/write-input-ring-all-buffers)
 (define-key shell-mode-map (kbd "M-r") 'helm-comint-input-ring)
