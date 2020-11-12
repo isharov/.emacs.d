@@ -221,15 +221,12 @@
 
 ;; js
 ;; npm install -g eslint eslint-plugin-react
+;; /usr/local/bin/eslint -> /usr/local/lib/node_modules/eslint/bin/eslint.js --resolve-plugins-relative-to=/usr/local/lib/node_modules/ $@
 (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
 (add-hook 'rjsx-mode-hook
           (lambda ()
             (local-set-key (kbd "M-,") 'buffer/tag-region)
             (setq-default sgml-basic-offset 4)
-            ))
-(add-hook 'flycheck-mode-hook
-          (lambda ()
-            (setq flycheck-eslintrc "~/.emacs.d/.eslintrc")
             ))
 
 ;; C++
