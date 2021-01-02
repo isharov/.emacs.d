@@ -56,6 +56,7 @@
 ;(key-chord-mode 1)
 (recentf-mode 1)
 (global-eldoc-mode 0) ; It works bad with Python for now
+(add-hook 'prog-mode-hook (lambda () (idle-highlight-mode t)))
 
 ;; Avoid performance issues in files with very long lines.
 (global-so-long-mode 1)
@@ -93,7 +94,6 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-x C-r") 'helm-recentf)
 (global-set-key (kbd "C-x r b") 'helm-filtered-bookmarks)
-(global-set-key (kbd "C-x c g") 'helm-google-suggest)
 (define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
 
 (setq helm-split-window-inside-p t)
