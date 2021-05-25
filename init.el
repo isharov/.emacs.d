@@ -261,11 +261,11 @@
             ))
 
 ;; go
-;; GO111MODULE=on go get golang.org/x/tools/gopls@latest
+;; go get golang.org/x/tools/gopls@latest
 (add-hook 'go-mode-hook #'lsp-deferred)
 
 ;; git
-(global-set-key (kbd "C-c v g") 'magit-status)
+(global-set-key (kbd "C-x g") 'magit-status)
 (setq magit-diff-refine-hunk t)
 
 (global-diff-hl-mode)
@@ -334,6 +334,7 @@
 (insert "cd AuCore/app")
 (execute-kbd-macro "\C-m")
 (buf-move-left)
+(toggle-frame-fullscreen)
 
 (provide 'init)
 ;;; init.el ends here
