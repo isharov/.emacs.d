@@ -122,7 +122,9 @@
       helm-ag-insert-at-point 'symbol)
 
 ;; helm-ls-git
-(global-set-key (kbd "C-c f") 'helm-ls-git-ls)
+(require 'helm-ls-git)
+(global-set-key (kbd "C-c f") 'helm-browse-project)
+(global-set-key (kbd "C-x r p") 'helm-projects-history)
 
 ;; company
 (add-hook 'after-init-hook 'global-company-mode)
@@ -262,7 +264,7 @@
 
 ;; go
 ;; go get golang.org/x/tools/gopls@latest
-(add-hook 'go-mode-hook #'lsp-deferred)
+; (add-hook 'go-mode-hook #'lsp-deferred)
 
 ;; git
 (global-set-key (kbd "C-x g") 'magit-status)
