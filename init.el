@@ -304,6 +304,12 @@
             (if (file-remote-p (path/current-dir))
                 (company-mode -1))))
 
+(defun shell-vlab ()
+  "Shortcut for vLab remote shell."
+  (interactive)
+  (let ((default-directory "/scp:isharov@vlab-dev:/home/isharov/dev/aucore/AuCore/app/"))
+    (shell "*shell-vlab*")))
+
 ;; org
 (eval-after-load "org"
   '(progn
