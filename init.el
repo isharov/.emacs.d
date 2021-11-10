@@ -44,7 +44,8 @@
   (setq ns-function-modifier 'control   ; left-control
         mac-function-modifier 'control  ; left-control
         mac-option-modifier 'control    ; right-control
-        mac-command-modifier 'meta))
+        mac-command-modifier 'meta
+        mac-pass-command-to-system nil))
 
 ;; common modes
 (tool-bar-mode 0)
@@ -309,6 +310,12 @@
   (interactive)
   (let ((default-directory "/scp:isharov@vlab-dev:/home/isharov/dev/aucore/AuCore/app/"))
     (shell "*shell-vlab*")))
+
+(defun shell-arm64 ()
+  "Shortcut for debian-arm64 remote shell."
+  (interactive)
+  (let ((default-directory "/scp:debian@arm64-dev:/home/debian/dev/aucore/AuCore/app/"))
+    (shell "*shell-arm64*")))
 
 ;; org
 (eval-after-load "org"
