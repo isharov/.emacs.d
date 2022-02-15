@@ -311,6 +311,12 @@
   (let ((default-directory "/scp:isharov@vlab-dev:/home/isharov/dev/aucore/AuCore/app/"))
     (shell "*shell-vlab*")))
 
+(defun shell-appliance ()
+  "Shortcut for local appliance VM shell."
+  (interactive)
+  (let ((default-directory "/scp:root@appliance-local:/"))
+    (shell "*shell-appliance*")))
+
 (defun shell-arm64 ()
   "Shortcut for debian-arm64 remote shell."
   (interactive)
