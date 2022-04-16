@@ -28,7 +28,8 @@
       scroll-preserve-screen-position 'always
       auto-save-default nil
       make-backup-files nil
-      create-lockfiles nil)
+      create-lockfiles nil
+      ring-bell-function 'ignore)
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
@@ -287,7 +288,7 @@
 
 ;; shell
 (add-hook 'shell-mode-hook 'comint/turn-on-history)
-(add-hook 'shell-mode-hook 'buffer-disable-undo)
+;(add-hook 'shell-mode-hook 'buffer-disable-undo)
 ;(add-hook 'shell-mode-hook (lambda () (goto-address-mode)))
 ;(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 (add-hook 'kill-buffer-hook 'comint-write-input-ring)
@@ -304,6 +305,12 @@
           (lambda ()
             (if (file-remote-p (path/current-dir))
                 (company-mode -1))))
+
+(defun shell-acamar ()
+  "Shortcut for veesp-acamar remote shell."
+  (interactive)
+  (let ((default-directory "/scp:root@veesp-acamar:/"))
+    (shell "*shell-acamar*")))
 
 (defun shell-vlab ()
   "Shortcut for vLab remote shell."
