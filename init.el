@@ -57,7 +57,6 @@
 (electric-pair-mode 1)
 ;(key-chord-mode 1)
 (recentf-mode 1)
-(global-eldoc-mode 0) ; It works bad with Python for now
 (add-hook 'prog-mode-hook (lambda () (idle-highlight-mode t)))
 
 ;; Avoid performance issues in files with very long lines.
@@ -187,13 +186,19 @@
 
 ;; lsp
 (require 'lsp-mode)
-(setq lsp-prefer-flymake nil)
-
 (require 'lsp-ui)
 (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+(setq
+ lsp-enable-file-watchers nil
+ lsp-eldoc-render-all t
+ lsp-ui-doc-enable nil
+ ;; lsp-eldoc-enable-hover nil
+ ;; lsp-signature-auto-activate nil
+ ;; lsp-signature-render-documentation nil
+ )
 
-(define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-(define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
 
 ;; spell checking
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
@@ -242,9 +247,10 @@
 
 ;; python
 ;; pip install -U python-language-server
-;(add-hook 'python-mode-hook #'lsp-deferred)
+(add-hook 'python-mode-hook #'lsp-deferred)
 (add-hook 'python-mode-hook
           (lambda ()
+            (require 'lsp-pyright)
             (local-unset-key (kbd "C-c C-v"))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             (local-set-key (kbd "C-c C-b") (lambda () (interactive) (buffer/shell-command "black")))
