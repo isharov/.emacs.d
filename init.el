@@ -374,5 +374,13 @@
 (buf-move-left)
 (toggle-frame-fullscreen)
 
+(when (eq system-type 'darwin)
+  (setq delete-by-moving-to-trash t)
+  (defun system-move-file-to-trash (file)
+    "Use \"trash\" to move FILE to the system trash.
+     When using Homebrew, install it using \"brew install trash\"."
+    (call-process (executable-find "trash") nil 0 nil "-F" file))
+  )
+
 (provide 'init)
 ;;; init.el ends here
