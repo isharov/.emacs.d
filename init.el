@@ -263,9 +263,9 @@
             ))
 (add-hook 'flycheck-mode-hook
           (lambda ()
-            (setq flycheck-python-flake8-executable "python3"
-                  flycheck-python-pylint-executable "python3"
-                  flycheck-python-pycompile-executable "python3"
+            (setq flycheck-python-flake8-executable "python3.9"
+                  flycheck-python-pylint-executable "python3.9"
+                  flycheck-python-pycompile-executable "python3.9"
                   flycheck-flake8rc "~/.config/flake8")
             ))
 
@@ -290,7 +290,7 @@
 
 ;; color-theme
 (when (window-system)
-  (load-theme 'spacemacs-dark t)
+  (load-theme 'zenburn t)
   (set-face-italic 'font-lock-comment-face 1)
   )
 
