@@ -190,7 +190,7 @@
 (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 (setq
  lsp-enable-file-watchers nil
- lsp-eldoc-render-all t
+ lsp-eldoc-render-all nil
  lsp-ui-doc-enable nil
  ;; lsp-eldoc-enable-hover nil
  ;; lsp-signature-auto-activate nil
