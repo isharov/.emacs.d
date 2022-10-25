@@ -13,8 +13,8 @@
 (if (file-exists-p custom-file)
     (load custom-file))
 
-(dolist (pkgdir (path/subdirs "~/.emacs.d/pkgs"))
-  (add-to-list 'load-path pkgdir))
+;; (dolist (pkgdir (path/subdirs "~/.emacs.d/pkgs"))
+;;   (add-to-list 'load-path pkgdir))
 
 ;; common editor customization
 (setq c-default-style "linux"
@@ -37,6 +37,8 @@
 ; (add-to-list 'default-frame-alist '(font . "Victor Mono"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
+
+(load-file "~/.emacs.d/pkgs/russian-mac.el")
 
 (mac-auto-operator-composition-mode)  ; ligatures support
 
@@ -253,7 +255,7 @@
             (require 'lsp-pyright)
             (local-unset-key (kbd "C-c C-v"))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
-            (local-set-key (kbd "C-c C-b") (lambda () (interactive) (buffer/shell-command "black")))
+            (local-set-key (kbd "C-c C-b") (lambda () (interactive) (buffer/shell-command "black --skip-string-normalization")))
             (local-set-key (kbd "C-c C-s") (lambda () (interactive) (buffer/shell-command "isort")))
             ))
 (add-hook 'inferior-python-mode-hook
@@ -320,18 +322,6 @@
   (let ((default-directory "/scp:root@veesp-acamar:/"))
     (shell "*shell-acamar*")))
 
-(defun shell-vlab ()
-  "Shortcut for vLab remote shell."
-  (interactive)
-  (let ((default-directory "/scp:isharov@vlab-dev:/home/isharov/dev/aucore/AuCore/app/"))
-    (shell "*shell-vlab*")))
-
-(defun shell-appliance ()
-  "Shortcut for local appliance VM shell."
-  (interactive)
-  (let ((default-directory "/scp:root@appliance-local:/"))
-    (shell "*shell-appliance*")))
-
 (defun shell-arm64 ()
   "Shortcut for debian-arm64 remote shell."
   (interactive)
@@ -364,9 +354,10 @@
 (windmove-down)
 (split-window-horizontally)
 (windmove-up)
-(find-file "~/dev/authasas/aucore/notes.org")
-(magit-status)
-(let ((default-directory "~/dev/authasas/aucore/AuCore/app/"))
+(find-file "~/dev/coinloan/notes.org")
+
+(let ((default-directory "~/dev/coinloan/coinloan/"))
+  (magit-status)
   (shell "*shell<1>*")
   (shell "*shell<2>*")
   )
