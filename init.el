@@ -39,6 +39,7 @@
 (blink-cursor-mode -1)
 
 (load-file "~/.emacs.d/pkgs/russian-mac.el")
+(setq default-input-method "russian-mac")
 
 (mac-auto-operator-composition-mode)  ; ligatures support
 
