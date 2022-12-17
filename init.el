@@ -91,7 +91,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; helm mode
-(require 'helm-config)
+;(require 'helm-config)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x b") 'helm-mini)
@@ -187,21 +187,8 @@
 (global-set-key (kbd "M-'") 'insert-pair)
 (global-set-key (kbd "M-)") 'delete-pair)
 
-;; lsp
-(require 'lsp-mode)
-; (require 'lsp-ui)
-; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-(setq
- lsp-enable-file-watchers nil
- lsp-eldoc-render-all nil
- ;; lsp-ui-doc-enable nil
- ;; lsp-eldoc-enable-hover nil
- ;; lsp-signature-auto-activate nil
- ;; lsp-signature-render-documentation nil
- )
-
-; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+;; eglot
+(add-hook 'python-mode-hook 'eglot-ensure)
 
 ;; spell checking
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
@@ -249,11 +236,8 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ; using c++ mode for *.h files
 
 ;; python
-;; pip install -U python-language-server
-(add-hook 'python-mode-hook #'lsp-deferred)
 (add-hook 'python-mode-hook
           (lambda ()
-            (require 'lsp-pyright)
             (local-unset-key (kbd "C-c C-v"))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             (local-set-key (kbd "C-c C-b") (lambda () (interactive) (buffer/shell-command "black --skip-string-normalization")))
