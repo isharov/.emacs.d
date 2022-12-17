@@ -189,12 +189,12 @@
 
 ;; lsp
 (require 'lsp-mode)
-(require 'lsp-ui)
-(add-hook 'lsp-mode-hook 'lsp-ui-mode)
+; (require 'lsp-ui)
+; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 (setq
  lsp-enable-file-watchers nil
  lsp-eldoc-render-all nil
- lsp-ui-doc-enable nil
+ ;; lsp-ui-doc-enable nil
  ;; lsp-eldoc-enable-hover nil
  ;; lsp-signature-auto-activate nil
  ;; lsp-signature-render-documentation nil
