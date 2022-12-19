@@ -196,10 +196,11 @@
 ;; spell checking
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
 
+;; flymake
+(global-set-key (kbd "C-c e") 'flymake-show-diagnostics-buffer)
 ;; flycheck
 (global-flycheck-mode)
-(global-set-key (kbd "C-c c") 'flycheck-mode)
-(global-set-key (kbd "C-c C-v") 'flycheck-list-errors)
+(global-set-key (kbd "C-c E") 'flycheck-list-errors)
 (add-hook 'flycheck-mode-hook
           (lambda ()
             (setq flycheck-checker-error-threshold nil
