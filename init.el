@@ -17,20 +17,23 @@
 ;;   (add-to-list 'load-path pkgdir))
 
 ;; common editor customization
-(setq c-default-style "linux"
-      c-basic-offset 4
-      require-final-newline t
-      kill-whole-line t
-      recentf-max-saved-items 5000
-      enable-recursive-minibuffers t
-      history-delete-duplicates t
-      history-length 100
-      scroll-preserve-screen-position 'always
-      auto-save-default nil
-      make-backup-files nil
-      create-lockfiles nil
-      ring-bell-function 'ignore
-      max-mini-window-height 3)
+(setq
+ c-default-style "linux"
+ c-basic-offset 4
+ require-final-newline t
+ kill-whole-line t
+ recentf-max-saved-items 5000
+ enable-recursive-minibuffers t
+ history-delete-duplicates t
+ history-length 100
+ scroll-preserve-screen-position 'always
+ auto-save-default nil
+ make-backup-files nil
+ create-lockfiles nil
+ ring-bell-function 'ignore
+ max-mini-window-height 3
+ resize-mini-windows nil
+ )
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
