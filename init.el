@@ -247,11 +247,11 @@
             (local-set-key (kbd "C-c C-b") (lambda () (interactive) (buffer/shell-command "black --skip-string-normalization")))
             (local-set-key (kbd "C-c C-s") (lambda () (interactive) (buffer/shell-command "isort")))
             ))
-(add-hook 'inferior-python-mode-hook
-          (lambda ()
-            (comint/turn-on-history)
-            (define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
-            ))
+;; (add-hook 'inferior-python-mode-hook
+;;           (lambda ()
+;;             (comint/turn-on-history)
+;;             (define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
+;;             ))
 (add-hook 'flycheck-mode-hook
           (lambda ()
             (setq flycheck-python-flake8-executable "python3.9"
@@ -276,8 +276,8 @@
 (setq diff-hl-disable-on-remote t)
 
 ;; svn
-(require 'dsvn)
-(global-set-key (kbd "C-c v s") 'isharov/svn-status)
+;; (require 'dsvn)
+;; (global-set-key (kbd "C-c v s") 'isharov/svn-status)
 
 ;; color-theme
 (when (window-system)
