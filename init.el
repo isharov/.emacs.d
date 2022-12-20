@@ -32,7 +32,7 @@
  create-lockfiles nil
  ring-bell-function 'ignore
  max-mini-window-height 3
- resize-mini-windows nil
+ ;; resize-mini-windows nil
  )
 (setq-default tab-width 4
               indent-tabs-mode nil
