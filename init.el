@@ -31,7 +31,7 @@
  make-backup-files nil
  create-lockfiles nil
  ring-bell-function 'ignore
- max-mini-window-height 3
+ max-mini-window-height 4
  ;; resize-mini-windows nil
  )
 (setq-default tab-width 4
