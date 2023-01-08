@@ -184,10 +184,10 @@
 (global-set-key (kbd "<M-S-down>") 'move-text-down)
 
 ;; handy pairs
-(global-set-key (kbd "M-[") 'insert-pair)
-(global-set-key (kbd "M-{") 'insert-pair)
-(global-set-key (kbd "M-\"") 'insert-pair)
-(global-set-key (kbd "M-'") 'insert-pair)
+;; (global-set-key (kbd "M-[") 'insert-pair)
+;; (global-set-key (kbd "M-{") 'insert-pair)
+;; (global-set-key (kbd "M-\"") 'insert-pair)
+;; (global-set-key (kbd "M-'") 'insert-pair)
 (global-set-key (kbd "M-)") 'delete-pair)
 
 ;; eglot
@@ -244,7 +244,7 @@
           (lambda ()
             (local-unset-key (kbd "C-c C-v"))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
-            (local-set-key (kbd "C-c C-b") (lambda () (interactive) (buffer/shell-command "black --skip-string-normalization")))
+            (local-set-key (kbd "C-c C-b") (lambda () (interactive) (buffer/shell-command "black")))
             (local-set-key (kbd "C-c C-s") (lambda () (interactive) (buffer/shell-command "isort")))
             ))
 ;; (add-hook 'inferior-python-mode-hook
