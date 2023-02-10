@@ -3,6 +3,7 @@
 ;;; Code:
 
 (load "~/.emacs.d/helpers")
+(load "~/.emacs.d/pkgs/tssh-tramp.el")
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
@@ -304,6 +305,12 @@
           (lambda ()
             (if (file-remote-p (path/current-dir))
                 (company-mode -1))))
+
+(defun shell-bastion ()
+  "Shortcut for bastion remote shell."
+  (interactive)
+  (let ((default-directory "/tssh:isharov@bastion:/home/isharov/"))
+    (shell "*shell-bastion*")))
 
 (defun shell-acamar ()
   "Shortcut for veesp-acamar remote shell."
