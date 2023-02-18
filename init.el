@@ -260,6 +260,7 @@
                   flycheck-python-pycompile-executable "python3.9"
                   flycheck-flake8rc "~/.config/flake8")
             ))
+(load "~/.emacs.d/pkgs/flycheck-ruff.el")
 
 ;; go
 ;; go get golang.org/x/tools/gopls@latest
@@ -312,18 +313,6 @@
   (let ((default-directory "/tssh:isharov@bastion:/home/isharov/"))
     (shell "*shell-bastion*")))
 
-(defun shell-acamar ()
-  "Shortcut for veesp-acamar remote shell."
-  (interactive)
-  (let ((default-directory "/scp:root@veesp-acamar:/"))
-    (shell "*shell-acamar*")))
-
-(defun shell-arm64 ()
-  "Shortcut for debian-arm64 remote shell."
-  (interactive)
-  (let ((default-directory "/scp:debian@arm64-dev:/home/debian/dev/aucore/AuCore/app/"))
-    (shell "*shell-arm64*")))
-
 ;; org
 (eval-after-load "org"
   '(progn
@@ -354,8 +343,8 @@
 
 (let ((default-directory "~/dev/coinloan/coinloan/"))
   (magit-status)
-  (shell "*shell<1>*")
-  (shell "*shell<2>*")
+  (shell "*shell*")
+  (shell "*shell*<1>")
   )
 (execute-kbd-macro "\C-m")
 (buf-move-left)
