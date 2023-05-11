@@ -193,6 +193,7 @@
 
 ;; eglot
 (add-hook 'python-mode-hook 'eglot-ensure)
+(add-hook 'rust-mode-hook 'eglot-ensure)
 
 ;; spell checking
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
@@ -207,6 +208,8 @@
             (setq flycheck-checker-error-threshold nil
                   flycheck-indication-mode nil)
             ))
+(with-eval-after-load 'rust-mode
+  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
 ;; tramp mode
 (setq password-cache-expiry nil)
@@ -245,7 +248,7 @@
           (lambda ()
             (local-unset-key (kbd "C-c C-v"))
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
-            (local-set-key (kbd "C-c C-b") (lambda () (interactive) (buffer/shell-command "black")))
+            (local-set-key (kbd "C-c C-f") (lambda () (interactive) (buffer/shell-command "black")))
             (local-set-key (kbd "C-c C-s") (lambda () (interactive) (buffer/shell-command "isort")))
             ))
 ;; (add-hook 'inferior-python-mode-hook
