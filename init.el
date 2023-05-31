@@ -244,6 +244,7 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ; using c++ mode for *.h files
 
 ;; python
+;; M-x find-library RET python RET
 (add-hook 'python-mode-hook
           (lambda ()
             (local-unset-key (kbd "C-c C-v"))
@@ -258,9 +259,9 @@
 ;;             ))
 (add-hook 'flycheck-mode-hook
           (lambda ()
-            (setq flycheck-python-flake8-executable "python3.9"
-                  flycheck-python-pylint-executable "python3.9"
-                  flycheck-python-pycompile-executable "python3.9"
+            (setq flycheck-python-flake8-executable "python3.11"
+                  flycheck-python-pylint-executable "python3.11"
+                  flycheck-python-pycompile-executable "python3.11"
                   flycheck-flake8rc "~/.config/flake8")
             ))
 (load "~/.emacs.d/pkgs/flycheck-ruff.el")
@@ -344,7 +345,7 @@
 (windmove-up)
 (find-file "~/dev/coinloan/notes.org")
 
-(let ((default-directory "~/dev/coinloan/coinloan/"))
+(let ((default-directory (or (getenv "EMACS_DEFAULT_DIRECTORY") "~/dev")))
   (magit-status)
   (shell "*shell*")
   (shell "*shell*<1>")
