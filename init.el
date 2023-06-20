@@ -328,6 +328,13 @@
      (define-key org-mode-map [C-down] 'org-metadown)
      ))
 
+;; mermaid
+;; npm install -g @mermaid-js/mermaid-cli
+;; (setq mermaid-mmdc-location "docker")
+;; (setq mermaid-flags "run --rm -v /tmp:/tmp ghcr.io/mermaid-js/mermaid-cli/mermaid-cli:9.1.6")
+(setq mermaid-flags "-s 3")
+;; (setq mermaid-output-format ".svg")
+
 ;; restclient.el
 (require 'restclient)
 ;(setq tls-program '("gnutls-cli --insecure --x509cafile %t -p %p %h" "gnutls-cli --insecure --x509cafile %t -p %p %h --protocols ssl3"))
