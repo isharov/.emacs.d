@@ -38,8 +38,8 @@
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
-(add-to-list 'default-frame-alist '(font . "Fira Code 12"))
-; (add-to-list 'default-frame-alist '(font . "Victor Mono"))
+;; (add-to-list 'default-frame-alist '(font . "Fira Code 12"))
+(add-to-list 'default-frame-alist '(font . "Victor Mono"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
 
