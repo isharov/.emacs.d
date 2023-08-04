@@ -184,6 +184,9 @@
 ;; (global-set-key (kbd "M-'") 'insert-pair)
 (global-set-key (kbd "M-)") 'delete-pair)
 
+;; direnv
+(direnv-mode)
+
 ;; eglot
 (add-hook 'python-mode-hook 'eglot-ensure)
 (add-hook 'rust-mode-hook 'eglot-ensure)
