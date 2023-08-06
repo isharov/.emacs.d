@@ -351,7 +351,6 @@
 (windmove-down)
 (split-window-horizontally)
 (windmove-up)
-(find-file "~/dev/coinloan/notes.org")
 
 (let ((default-directory (or (getenv "EMACS_DEFAULT_DIRECTORY") "~/dev")))
   (magit-status)
