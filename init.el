@@ -260,6 +260,7 @@
           (lambda ()
             (local-set-key (kbd "M-,") 'buffer/tag-region)
             (setq-default sgml-basic-offset 4)
+            (setq indent-tabs-mode nil)
             ))
 
 ;; C++
