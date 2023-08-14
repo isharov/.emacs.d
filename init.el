@@ -202,7 +202,7 @@
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")
         (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")))
-; (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+;; (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
 (setq major-mode-remap-alist
       '((bash-mode . bash-ts-mode)
         (js2-mode . js-ts-mode)
@@ -211,16 +211,24 @@
         (css-mode . css-ts-mode)
         (python-mode . python-ts-mode)
         (rust-mode . rust-ts-mode)))
-; (setq python-ts-mode-hook python-mode-hook)
+
+;; combobulate
 (add-to-list 'load-path "~/.emacs.d/pkgs/combobulate")
 (load "combobulate.el")
+(eval-after-load "combobulate"
+  '(progn
+     (define-key combobulate-key-map [M-left] nil)
+     (define-key combobulate-key-map [M-right] nil)
+     (define-key combobulate-key-map [M-up] nil)
+     (define-key combobulate-key-map [M-down] nil)
+     (define-key combobulate-key-map [C-left] 'combobulate-navigate-logical-previous)
+     (define-key combobulate-key-map [C-right] 'combobulate-navigate-logical-next)
+     (define-key combobulate-key-map [C-up] 'combobulate-navigate-up-list-maybe)
+     (define-key combobulate-key-map [C-down] 'combobulate-navigate-down-list-maybe)
+     ))
 
 ;; direnv
 (direnv-mode)
-
-;; eglot
-(add-hook 'python-ts-mode-hook 'eglot-ensure)
-(add-hook 'rust-ts-mode-hook 'eglot-ensure)
 
 ;; spell checking
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
@@ -235,8 +243,6 @@
             (setq flycheck-checker-error-threshold nil
                   flycheck-indication-mode nil)
             ))
-(with-eval-after-load 'rust-mode
-  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
 ;; tramp mode
 (setq password-cache-expiry nil)
@@ -273,9 +279,11 @@
 
 ;; python
 ;; M-x find-library RET python RET
+;; (setq python-ts-mode-hook python-mode-hook)
 (add-hook 'python-ts-mode-hook
           (lambda ()
-            (local-unset-key (kbd "C-c C-v"))
+            (eglot-ensure)
+            (combobulate-mode)
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             (local-set-key (kbd "C-c C-f")
                            (lambda ()
@@ -302,6 +310,11 @@
 ;; go
 ;; go get golang.org/x/tools/gopls@latest
 ; (add-hook 'go-mode-hook #'lsp-deferred)
+
+;; rust
+(add-hook 'rust-ts-mode-hook 'eglot-ensure)
+(with-eval-after-load 'rust-mode
+  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
 ;; git
 (global-set-key (kbd "C-x g") 'magit-status)
