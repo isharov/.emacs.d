@@ -293,6 +293,7 @@
                              ))
             (local-set-key (kbd "C-c C-s") (lambda () (interactive) (buffer/shell-command "isort")))
             ))
+(add-hook 'eglot-managed-mode-hook 'flymake-ruff-load)
 ;; (add-hook 'inferior-python-mode-hook
 ;;           (lambda ()
 ;;             (comint/turn-on-history)
@@ -305,7 +306,7 @@
                   flycheck-python-pycompile-executable "python3.11"
                   flycheck-flake8rc "~/.config/flake8")
             ))
-(load "~/.emacs.d/pkgs/flycheck-ruff.el")
+; (load "~/.emacs.d/pkgs/flycheck-ruff.el")
 
 ;; go
 ;; go get golang.org/x/tools/gopls@latest
