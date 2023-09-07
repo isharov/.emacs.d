@@ -102,7 +102,6 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-x C-r") 'helm-recentf)
 (global-set-key (kbd "C-x r b") 'helm-filtered-bookmarks)
-(define-key minibuffer-local-map (kbd "M-r") 'helm-minibuffer-history)
 
 (setq helm-split-window-inside-p t)
 (when (executable-find "curl")
@@ -112,16 +111,6 @@
 ;; helm-swoop
 (require 'helm-swoop)
 (global-set-key (kbd "M-i") 'helm-swoop)
-(global-set-key (kbd "M-I") 'helm-swoop-back-to-last-point)
-(global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
-(global-set-key (kbd "C-x M-i") 'helm-multi-swoop-all)
-(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
-(define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
-(define-key helm-swoop-map (kbd "M-m") 'helm-multi-swoop-current-mode-from-helm-swoop)
-(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
-(define-key helm-swoop-map (kbd "C-s") 'helm-next-line)
-(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
-(define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
 (setq helm-swoop-split-with-multiple-windows t)
 
 ;; helm-ag
