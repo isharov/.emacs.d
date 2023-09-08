@@ -349,6 +349,12 @@
             (if (file-remote-p (path/current-dir))
                 (company-mode -1))))
 
+(defun shell-acamar ()
+  "Shortcut for acamar remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:root@acamar:/"))
+    (shell "*shell-acamar*")))
+
 (defun shell-bastion ()
   "Shortcut for bastion remote shell."
   (interactive)
