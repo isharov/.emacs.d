@@ -328,6 +328,8 @@
   )
 
 ;; shell
+(add-to-list 'load-path "~/.emacs.d/pkgs/helm-comint/")
+(load "helm-comint.el") ;; TODO: is it deprecated? What's the alternative
 (add-hook 'shell-mode-hook 'comint/turn-on-history)
 ;(add-hook 'shell-mode-hook 'buffer-disable-undo)
 ;(add-hook 'shell-mode-hook (lambda () (goto-address-mode)))
