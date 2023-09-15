@@ -186,6 +186,7 @@
         (make "https://github.com/alemuller/tree-sitter-make")
         (markdown "https://github.com/ikatyang/tree-sitter-markdown")
         (python "https://github.com/tree-sitter/tree-sitter-python")
+        (rust "https://github.com/tree-sitter/tree-sitter-rust")
         (toml "https://github.com/tree-sitter/tree-sitter-toml")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
@@ -282,7 +283,11 @@
                              ))
             (local-set-key (kbd "C-c C-s") (lambda () (interactive) (buffer/shell-command "isort")))
             ))
-(add-hook 'eglot-managed-mode-hook 'flymake-ruff-load)
+(add-hook 'eglot-managed-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'python-ts-mode)
+              (flymake-ruff-load))
+            ))
 ;; (add-hook 'inferior-python-mode-hook
 ;;           (lambda ()
 ;;             (comint/turn-on-history)
