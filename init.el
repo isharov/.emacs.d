@@ -240,6 +240,11 @@
 ;; docker
 (global-set-key (kbd "C-c d") 'docker)
 
+;; k8s
+(require 'kubel)
+(kubel-vterm-setup)
+(setq kubel-log-tail-n 1000)
+
 ;; scala
 ;(require 'scala-mode2)
 ;(add-hook 'scala-mode-hook
