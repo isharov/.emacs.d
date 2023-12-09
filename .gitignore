@@ -13,4 +13,5 @@ transient/
 eln-cache/
 pkgs/combobulate/
 pkgs/helm-comint/
+pkgs/copilot.el/
 tree-sitter/

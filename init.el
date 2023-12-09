@@ -245,6 +245,13 @@
 (kubel-vterm-setup)
 (setq kubel-log-tail-n 1000)
 
+;; copilot
+;; it has implicit editorconfig melpa dependency
+;; (add-to-list 'load-path "~/.emacs.d/pkgs/copilot.el")
+;; (require 'copilot)
+;; (add-hook 'prog-mode-hook 'copilot-mode)
+;; (define-key copilot-mode-map (kbd "M-C-<return>") 'copilot-accept-completion)
+
 ;; scala
 ;(require 'scala-mode2)
 ;(add-hook 'scala-mode-hook
