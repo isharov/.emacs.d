@@ -115,7 +115,9 @@
 
 ;; helm-ag
 (global-set-key (kbd "C-c g") 'project/ag)
-(setq helm-ag-base-command "ag --hidden --nocolor --nogroup --ignore-case --ignore=.git --ignore=.svn"
+;; rg --vimgrep --no-heading --smart-case
+;; ag --hidden --nocolor --nogroup --ignore-case --ignore=.git --ignore=.svn
+(setq helm-ag-base-command "rg --vimgrep --no-heading --smart-case"
       helm-ag-insert-at-point 'symbol)
 
 ;; helm-ls-git
