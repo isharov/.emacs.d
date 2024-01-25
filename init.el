@@ -39,7 +39,7 @@
               indent-tabs-mode nil
               show-trailing-whitespace nil)
 ;; (add-to-list 'default-frame-alist '(font . "Fira Code 12"))
-(add-to-list 'default-frame-alist '(font . "Victor Mono"))
+(add-to-list 'default-frame-alist '(font . "Victor Mono 14"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
 
@@ -309,19 +309,20 @@
 ;;             ))
 (add-hook 'flycheck-mode-hook
           (lambda ()
-            (setq flycheck-python-flake8-executable "python3.11"
-                  flycheck-python-pylint-executable "python3.11"
-                  flycheck-python-pycompile-executable "python3.11"
-                  flycheck-flake8rc "~/.config/flake8")
+            (setq flycheck-flake8rc "~/.config/flake8")
             ))
 ; (load "~/.emacs.d/pkgs/flycheck-ruff.el")
 
 ;; go
-;; go get golang.org/x/tools/gopls@latest
+;; go install golang.org/x/tools/gopls@latest
 ; (add-hook 'go-mode-hook #'lsp-deferred)
 
 ;; rust
-(add-hook 'rust-ts-mode-hook 'eglot-ensure)
+(add-hook 'rust-ts-mode-hook
+          (lambda ()
+            (eglot-ensure)
+            (combobulate-mode)
+            ))
 (with-eval-after-load 'rust-mode
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
