@@ -227,14 +227,6 @@
 
 ;; flymake
 (global-set-key (kbd "C-c e") 'flymake-show-diagnostics-buffer)
-;; flycheck
-(global-flycheck-mode)
-(global-set-key (kbd "C-c E") 'flycheck-list-errors)
-(add-hook 'flycheck-mode-hook
-          (lambda ()
-            (setq flycheck-checker-error-threshold nil
-                  flycheck-indication-mode nil)
-            ))
 
 ;; tramp mode
 (setq password-cache-expiry nil)
@@ -307,11 +299,6 @@
 ;;             (comint/turn-on-history)
 ;;             (define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
 ;;             ))
-(add-hook 'flycheck-mode-hook
-          (lambda ()
-            (setq flycheck-flake8rc "~/.config/flake8")
-            ))
-; (load "~/.emacs.d/pkgs/flycheck-ruff.el")
 
 ;; go
 ;; go install golang.org/x/tools/gopls@latest
@@ -323,8 +310,6 @@
             (eglot-ensure)
             (combobulate-mode)
             ))
-(with-eval-after-load 'rust-mode
-  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
 ;; git
 (global-set-key (kbd "C-x g") 'magit-status)
