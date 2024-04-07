@@ -305,6 +305,7 @@
 ; (add-hook 'go-mode-hook #'lsp-deferred)
 
 ;; rust
+;; rustup component add rust-analyzer
 (add-hook 'rust-ts-mode-hook
           (lambda ()
             (eglot-ensure)
@@ -357,7 +358,7 @@
 (defun shell-acamar ()
   "Shortcut for acamar remote shell."
   (interactive)
-  (let ((default-directory "/ssh:root@acamar:/"))
+  (let ((default-directory "/ssh:root@acamar#20002:/"))
     (shell "*shell-acamar*")))
 
 (defun shell-bastion ()
@@ -365,6 +366,12 @@
   (interactive)
   (let ((default-directory "/tssh:isharov@bastion:/home/isharov/"))
     (shell "*shell-bastion*")))
+
+(defun shell-gitlab ()
+  "Shortcut for gitlab remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:root@gitlab:/root/"))
+    (shell "*shell-gitlab*")))
 
 ;; org
 (eval-after-load "org"
