@@ -230,6 +230,7 @@
 
 ;; tramp mode
 (setq password-cache-expiry nil)
+(setq tramp-histfile-override t)  ;; disable history file
 
 ;; docker
 (global-set-key (kbd "C-c d") 'docker)
