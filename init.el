@@ -330,7 +330,7 @@
 
 ;; color-theme
 (when (window-system)
-  (load-theme 'zenburn t)
+  (load-theme 'spacemacs-light t)
   (set-face-italic 'font-lock-comment-face 1)
   )
 
