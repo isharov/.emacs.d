@@ -175,6 +175,9 @@
 ;; (global-set-key (kbd "M-'") 'insert-pair)
 (global-set-key (kbd "M-)") 'delete-pair)
 
+;; undo
+;; (global-set-key (kbd "C-/") 'vundo)
+
 ;; tree-sitter
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
