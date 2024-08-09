@@ -66,6 +66,7 @@
 ;(key-chord-mode 1)
 (recentf-mode 1)
 (add-hook 'prog-mode-hook (lambda () (idle-highlight-mode t)))
+(global-hl-line-mode 1)
 
 ;; Avoid performance issues in files with very long lines.
 (global-so-long-mode 1)
@@ -177,6 +178,9 @@
 
 ;; undo
 ;; (global-set-key (kbd "C-/") 'vundo)
+
+;; project extra markers
+(setq project-vc-extra-root-markers '(".project"))
 
 ;; tree-sitter
 (setq treesit-language-source-alist
@@ -306,7 +310,7 @@
 
 ;; go
 ;; go install golang.org/x/tools/gopls@latest
-; (add-hook 'go-mode-hook #'lsp-deferred)
+(add-hook 'go-mode-hook 'eglot-ensure)
 
 ;; rust
 ;; rustup component add rust-analyzer
@@ -376,6 +380,12 @@
   (interactive)
   (let ((default-directory "/ssh:root@gitlab:/root/"))
     (shell "*shell-gitlab*")))
+
+(defun shell-gametoken-prod ()
+  "Shortcut for gametoken prod remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:ec2-user@gametoken-prod:/home/ec2-user"))
+    (shell "*shell-gametoken-prod*")))
 
 ;; org
 (eval-after-load "org"
