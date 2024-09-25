@@ -247,6 +247,10 @@
 (kubel-vterm-setup)
 (setq kubel-log-tail-n 1000)
 
+(require 'kubed)
+(keymap-global-set "C-c k" 'kubed-prefix-map)
+(keymap-set kubed-prefix-map "k" #'kubed-transient)
+
 ;; copilot
 ;; it has implicit editorconfig melpa dependency
 ;; (add-to-list 'load-path "~/.emacs.d/pkgs/copilot.el")
