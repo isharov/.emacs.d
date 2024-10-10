@@ -115,7 +115,8 @@
 (setq helm-swoop-split-with-multiple-windows t)
 
 ;; helm-ag
-(global-set-key (kbd "C-c g") 'project/ag)
+(global-set-key (kbd "C-c g") 'project/ag)  ;; project search
+(global-set-key (kbd "C-c G") 'helm-do-ag)  ;; custom dir search
 ;; rg --vimgrep --no-heading --smart-case
 ;; ag --hidden --nocolor --nogroup --ignore-case --ignore=.git --ignore=.svn
 (setq helm-ag-base-command "rg --vimgrep --no-heading --smart-case --hidden --glob !.git"
