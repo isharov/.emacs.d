@@ -328,6 +328,12 @@
 ;; git
 (global-set-key (kbd "C-x g") 'magit-status)
 (setq magit-diff-refine-hunk t)
+(add-hook
+ 'magit-diff-mode-hook
+ (lambda ()
+   (define-key magit-diff-mode-map (kbd "C-o") 'magit-diff-visit-worktree-file-other-window)
+   )
+ )
 
 (global-diff-hl-mode)
 (diff-hl-flydiff-mode)
@@ -374,6 +380,12 @@
   (let ((default-directory "/ssh:root@acamar#20002:/"))
     (shell "*shell-acamar*")))
 
+(defun shell-arneb ()
+  "Shortcut for arneb remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:root@arneb#20002:/"))
+    (shell "*shell-arneb*")))
+
 (defun shell-bastion ()
   "Shortcut for bastion remote shell."
   (interactive)
@@ -391,6 +403,13 @@
   (interactive)
   (let ((default-directory "/ssh:ec2-user@gametoken-prod:/home/ec2-user"))
     (shell "*shell-gametoken-prod*")))
+
+(defun shell-synology ()
+  "Shortcut for synology remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:192.168.1.3:~"))
+    (shell "*shell-synology*")))
+
 
 ;; org
 (eval-after-load "org"
