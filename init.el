@@ -329,9 +329,9 @@
 (global-set-key (kbd "C-x g") 'magit-status)
 (setq magit-diff-refine-hunk t)
 (add-hook
- 'magit-diff-mode-hook
+ 'magit-mode-hook
  (lambda ()
-   (define-key magit-diff-mode-map (kbd "C-o") 'magit-diff-visit-worktree-file-other-window)
+   (define-key magit-mode-map (kbd "C-o") 'magit-diff-visit-worktree-file-other-window)
    )
  )
 
