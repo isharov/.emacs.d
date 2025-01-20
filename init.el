@@ -301,6 +301,14 @@
                              (buffer/shell-command "isort")
                              ))
             (local-set-key (kbd "C-c C-s") (lambda () (interactive) (buffer/shell-command "isort")))
+            ;; delete region if active else dedent
+            (local-set-key (kbd "<backspace>")
+                           (lambda ()
+                             (interactive)
+                             (if (use-region-p)
+                                 (delete-backward-char 1)
+                               (python-indent-dedent-line-backspace 1))
+                             ))
             ))
 (add-hook 'eglot-managed-mode-hook
           (lambda ()
