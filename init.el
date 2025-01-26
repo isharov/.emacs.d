@@ -39,7 +39,8 @@
               indent-tabs-mode nil
               show-trailing-whitespace nil)
 ;; (add-to-list 'default-frame-alist '(font . "Fira Code 12"))
-(add-to-list 'default-frame-alist '(font . "Victor Mono 14"))
+;; (add-to-list 'default-frame-alist '(font . "Victor Mono 14"))
+(add-to-list 'default-frame-alist '(font . "Iosevka Term 14"))
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
 
@@ -356,7 +357,8 @@
 
 ;; color-theme
 (when (window-system)
-  (load-theme 'spacemacs-light t)
+  ;; (load-theme 'spacemacs-light t)
+  (load-theme 'doom-one t)
   (set-face-italic 'font-lock-comment-face 1)
   )
 
