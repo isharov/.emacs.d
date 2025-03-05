@@ -40,7 +40,7 @@
               show-trailing-whitespace nil)
 ;; (add-to-list 'default-frame-alist '(font . "Fira Code 12"))
 ;; (add-to-list 'default-frame-alist '(font . "Victor Mono 14"))
-(add-to-list 'default-frame-alist '(font . "Iosevka Term 14"))
+(set-frame-font "Iosevka 14" nil t)
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
 
@@ -130,6 +130,9 @@
 
 ;; company
 (add-hook 'after-init-hook 'global-company-mode)
+(global-set-key (kbd "C-<tab>") #'company-indent-or-complete-common)
+;; (setq company-global-modes '(not shell-mode))
+;; (setq company-idle-delay nil)
 
 ;; dired
 (setq dired-recursive-copies 'always)
@@ -252,6 +255,14 @@
 (require 'kubed)
 (keymap-global-set "C-c k" 'kubed-prefix-map)
 (keymap-set kubed-prefix-map "k" #'kubed-transient)
+
+;; gptel
+(setq
+ gptel-model 'phi4:latest
+ gptel-backend (gptel-make-ollama "Ollama"
+                 :host "localhost:11434"
+                 :stream t
+                 :models '(phi4:latest qwen2.5-coder:14b)))
 
 ;; copilot
 ;; it has implicit editorconfig melpa dependency
@@ -407,6 +418,12 @@
   (interactive)
   (let ((default-directory "/ssh:root@gitlab:/root/"))
     (shell "*shell-gitlab*")))
+
+(defun shell-clickhouse-ob ()
+  "Shortcut for clickhouse-ob remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:root@clickhouse-ob:/root/"))
+    (shell "*shell-clickhouse-ob*")))
 
 (defun shell-gametoken-prod ()
   "Shortcut for gametoken prod remote shell."
