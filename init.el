@@ -397,12 +397,6 @@
             (if (file-remote-p (path/current-dir))
                 (company-mode -1))))
 
-(defun shell-acamar ()
-  "Shortcut for acamar remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:root@acamar#20002:/"))
-    (shell "*shell-acamar*")))
-
 (defun shell-arneb ()
   "Shortcut for arneb remote shell."
   (interactive)
@@ -426,6 +420,12 @@
   (interactive)
   (let ((default-directory "/ssh:root@clickhouse-ob:/root/"))
     (shell "*shell-clickhouse-ob*")))
+
+(defun shell-clickhouse-dedicated ()
+  "Shortcut for clickhouse-dedicated remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:root@clickhouse-dedicated:/root/"))
+    (shell "*shell-clickhouse-dedicated*")))
 
 (defun shell-gametoken-prod ()
   "Shortcut for gametoken prod remote shell."
