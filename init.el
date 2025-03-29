@@ -38,9 +38,8 @@
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
-;; (add-to-list 'default-frame-alist '(font . "Fira Code 12"))
-;; (add-to-list 'default-frame-alist '(font . "Victor Mono 14"))
-(set-frame-font "Iosevka 14" nil t)
+;; (set-frame-font "Victor Mono 14" nil t)
+(set-frame-font "Iosevka Light 16" nil t)
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
 
@@ -130,7 +129,7 @@
 
 ;; company
 (add-hook 'after-init-hook 'global-company-mode)
-(global-set-key (kbd "C-<tab>") #'company-indent-or-complete-common)
+(global-set-key (kbd "C-<tab>") #'company-complete-common)
 ;; (setq company-global-modes '(not shell-mode))
 ;; (setq company-idle-delay nil)
 
@@ -263,6 +262,9 @@
                  :host "localhost:11434"
                  :stream t
                  :models '(phi4:latest qwen2.5-coder:14b)))
+
+;; eglot
+(setq eglot-report-progress nil)
 
 ;; copilot
 ;; it has implicit editorconfig melpa dependency
