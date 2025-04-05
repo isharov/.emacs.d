@@ -282,6 +282,9 @@
 ;                             (interactive)
 ;                             (buffer/create-send-region "*sbt-console*" "sbt console-quick")))))
 
+;; xml
+(setq nxml-child-indent 4 nxml-attribute-indent 4)
+
 ;; js
 ;; npm install -g eslint eslint-plugin-react
 ;; /usr/local/bin/eslint -> /usr/local/lib/node_modules/eslint/bin/eslint.js --resolve-plugins-relative-to=/usr/local/lib/node_modules/ $@
@@ -415,17 +418,17 @@
   (let ((default-directory "/ssh:root@gitlab:/root/"))
     (shell "*shell-gitlab*")))
 
-(defun shell-clickhouse-ob ()
-  "Shortcut for clickhouse-ob remote shell."
+(defun shell-ob-analyzer-finland ()
+  "Shortcut for ob-analyzer-finland remote shell."
   (interactive)
-  (let ((default-directory "/ssh:root@clickhouse-ob:/root/"))
-    (shell "*shell-clickhouse-ob*")))
+  (let ((default-directory "/ssh:root@ob-analyzer-finland:/root/"))
+    (shell "*shell-ob-analyzer-finland*")))
 
-(defun shell-clickhouse-dedicated ()
-  "Shortcut for clickhouse-dedicated remote shell."
+(defun shell-ob-analyzer-germany ()
+  "Shortcut for ob-analyzer-germany remote shell."
   (interactive)
-  (let ((default-directory "/ssh:root@clickhouse-dedicated:/root/"))
-    (shell "*shell-clickhouse-dedicated*")))
+  (let ((default-directory "/ssh:root@ob-analyzer-germany:/root/"))
+    (shell "*shell-ob-analyzer-germany*")))
 
 (defun shell-gametoken-prod ()
   "Shortcut for gametoken prod remote shell."
