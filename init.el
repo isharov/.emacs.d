@@ -314,10 +314,10 @@
             (local-set-key (kbd "C-c C-f")
                            (lambda ()
                              (interactive)
-                             (buffer/shell-command "black")
-                             (buffer/shell-command "isort")
+                             (buffer/shell-command "ruff format")
+                             (buffer/shell-command "ruff check --fix --unsafe-fixes")
+                             (revert-buffer t t t)
                              ))
-            (local-set-key (kbd "C-c C-s") (lambda () (interactive) (buffer/shell-command "isort")))
             ;; delete region if active else dedent
             (local-set-key (kbd "<backspace>")
                            (lambda ()
