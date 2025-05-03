@@ -263,6 +263,13 @@
                  :stream t
                  :models '(phi4:latest qwen2.5-coder:14b)))
 
+;; aider
+(use-package aidermacs
+  :bind (("C-c a" . aidermacs-transient-menu))
+  :config
+  :custom
+  (aidermacs-default-model "openrouter/anthropic/claude-3.7-sonnet"))
+
 ;; eglot
 (setq eglot-report-progress nil)
 
