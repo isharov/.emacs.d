@@ -46,8 +46,6 @@
 (load-file "~/.emacs.d/pkgs/russian-mac.el")
 (setq default-input-method "russian-mac")
 
-(mac-auto-operator-composition-mode)  ; ligatures support
-
 ;; macbook keyboard modifications
 (when (eq system-type 'darwin)
   (setq ns-function-modifier 'control   ; left-control
@@ -141,6 +139,7 @@
 (put 'dired-find-alternate-file 'disabled nil)
 (add-hook 'dired-mode-hook
           (lambda ()
+            (dired-omit-mode)
             (define-key dired-mode-map (kbd "<return>")
               'dired-find-alternate-file) ; was dired-advertised-find-file
             (define-key dired-mode-map (kbd "^")
@@ -237,7 +236,7 @@
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
 
 ;; flymake
-(global-set-key (kbd "C-c e") 'flymake-show-diagnostics-buffer)
+(global-set-key (kbd "C-c e") 'flymake-show-buffer-diagnostics)
 
 ;; tramp mode
 (setq password-cache-expiry nil)
@@ -492,7 +491,7 @@
   )
 (execute-kbd-macro "\C-m")
 (buf-move-left)
-(toggle-frame-fullscreen)
+;; (toggle-frame-fullscreen)
 
 (when (eq system-type 'darwin)
   (setq delete-by-moving-to-trash t)
