@@ -38,8 +38,7 @@
 (setq-default tab-width 4
               indent-tabs-mode nil
               show-trailing-whitespace nil)
-;; (set-frame-font "Victor Mono 14" nil t)
-(set-frame-font "Iosevka Light 16" nil t)
+
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
 
@@ -267,7 +266,11 @@
   :bind (("C-c a" . aidermacs-transient-menu))
   :config
   :custom
-  (aidermacs-default-model "openrouter/anthropic/claude-3.7-sonnet"))
+  (aidermacs-use-architect-mode t)
+  (aidermacs-show-diff-after-change nil)
+  (aidermacs-default-model "openrouter/anthropic/claude-sonnet-4")
+  (aidermacs-architect-model "openrouter/anthropic/claude-opus-4")
+  )
 
 ;; eglot
 (setq eglot-report-progress nil)
@@ -358,7 +361,7 @@
 
 ;; git
 (global-set-key (kbd "C-x g") 'magit-status)
-(setq magit-diff-refine-hunk t)
+(setq magit-diff-refine-hunk 'all)
 (add-hook
  'magit-mode-hook
  (lambda ()
@@ -381,7 +384,10 @@
 (when (window-system)
   ;; (load-theme 'spacemacs-light t)
   (load-theme 'doom-one t)
+  ;; (set-frame-font "Victor Mono 14" nil t)
+  (set-frame-font "Iosevka 16" nil t)
   (set-face-italic 'font-lock-comment-face 1)
+  (set-face-attribute 'default nil :weight 'extra-light)
   )
 
 ;; shell
