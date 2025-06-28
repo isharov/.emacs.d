@@ -266,7 +266,7 @@
   :bind (("C-c a" . aidermacs-transient-menu))
   :config
   :custom
-  (aidermacs-use-architect-mode t)
+  (aidermacs-default-chat-mode 'architect)
   (aidermacs-show-diff-after-change nil)
   (aidermacs-default-model "openrouter/anthropic/claude-sonnet-4")
   (aidermacs-architect-model "openrouter/anthropic/claude-opus-4")
