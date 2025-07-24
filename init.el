@@ -208,7 +208,7 @@
       '((bash-mode . bash-ts-mode)
         (js2-mode . js-ts-mode)
         (typescript-mode . typescript-ts-mode)
-        (json-mode . json-ts-mode)
+        (js-json-mode . json-ts-mode)
         (css-mode . css-ts-mode)
         (python-mode . python-ts-mode)
         (rust-mode . rust-ts-mode)))
@@ -294,7 +294,7 @@
 ;; xml
 (setq nxml-child-indent 4 nxml-attribute-indent 4)
 
-;; js
+;; Javascript / JSON
 ;; npm install -g eslint eslint-plugin-react
 ;; /usr/local/bin/eslint -> /usr/local/lib/node_modules/eslint/bin/eslint.js --resolve-plugins-relative-to=/usr/local/lib/node_modules/ $@
 (add-hook 'js-mode-hook
@@ -303,6 +303,7 @@
             (setq-default sgml-basic-offset 4)
             (setq indent-tabs-mode nil)
             ))
+(setq json-ts-mode-indent-offset 4)
 
 ;; C++
 (add-hook 'c-mode-common-hook
@@ -382,12 +383,8 @@
 
 ;; color-theme
 (when (window-system)
-  ;; (load-theme 'spacemacs-light t)
-  (load-theme 'doom-one t)
-  ;; (set-frame-font "Victor Mono 14" nil t)
-  (set-frame-font "Iosevka 16" nil t)
-  (set-face-italic 'font-lock-comment-face 1)
-  (set-face-attribute 'default nil :weight 'extra-light)
+  (load-theme 'doom-one-light t)
+  (theme/setup-font)
   )
 
 ;; shell
@@ -411,6 +408,8 @@
           (lambda ()
             (if (file-remote-p (path/current-dir))
                 (company-mode -1))))
+;; eat
+(setq eat-term-name "xterm-256color")
 
 (defun shell-arneb ()
   "Shortcut for arneb remote shell."

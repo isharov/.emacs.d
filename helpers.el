@@ -262,9 +262,20 @@
   (interactive)
   (helm-do-ag (project/root)))
 
-(defun theme/reload ()
-  (interactive)
-  (disable-theme 'spacemacs-dark)
-  (load-theme 'spacemacs-dark t)
+(defun theme/setup-font ()
+  ;; (set-frame-font "Victor Mono 14" nil t)
+  (set-frame-font "Iosevka 16" nil t)
   (set-face-italic 'font-lock-comment-face 1)
+  (set-face-attribute 'default nil :weight 'extra-light)
+  )
+
+(defun theme/switch ()
+  (interactive)
+  (let ((theme (intern (completing-read "Load custom theme: "
+                                        (mapcar #'symbol-name
+				                                (custom-available-themes))))))
+    (disable-theme (car custom-enabled-themes))
+    (load-theme theme t)
+    (theme/setup-font)
+    )
   )
