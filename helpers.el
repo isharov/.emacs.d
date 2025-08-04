@@ -266,7 +266,7 @@
   ;; (set-frame-font "Victor Mono 14" nil t)
   (set-frame-font "Iosevka 16" nil t)
   (set-face-italic 'font-lock-comment-face 1)
-  (set-face-attribute 'default nil :weight 'extra-light)
+  ;; (set-face-attribute 'default nil :weight 'extra-light)
   )
 
 (defun theme/switch ()
