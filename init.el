@@ -305,6 +305,14 @@
             ))
 (setq json-ts-mode-indent-offset 4)
 
+;; tsx
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-hook 'tsx-ts-mode-hook
+          (lambda ()
+            ;; (eglot-ensure)
+            (combobulate-mode)
+            ))
+
 ;; C++
 (add-hook 'c-mode-common-hook
           (lambda ()
