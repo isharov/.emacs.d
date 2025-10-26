@@ -249,28 +249,38 @@
 (kubel-vterm-setup)
 (setq kubel-log-tail-n 1000)
 
-(require 'kubed)
-(keymap-global-set "C-c k" 'kubed-prefix-map)
-(keymap-set kubed-prefix-map "k" #'kubed-transient)
+(defun k8s/zent-prod ()
+  (interactive)
+  (kubel-set-kubectl-config-file "~/.kube/zent.prod.config")
+  (kubel-open "zent-production" "production" "pods"))
+
+(defun k8s/clapp-staging ()
+  (interactive)
+  (kubel-set-kubectl-config-file "~/.kube/clapp.staging.config")
+  (kubel-open "clapp-staging" "staging" "pods"))
+
+;; (require 'kubed)
+;; (keymap-global-set "C-c k" 'kubed-prefix-map)
+;; (keymap-set kubed-prefix-map "k" #'kubed-transient)
 
 ;; gptel
-(setq
- gptel-model 'phi4:latest
- gptel-backend (gptel-make-ollama "Ollama"
-                 :host "localhost:11434"
-                 :stream t
-                 :models '(phi4:latest qwen2.5-coder:14b)))
+;; (setq
+;;  gptel-model 'phi4:latest
+;;  gptel-backend (gptel-make-ollama "Ollama"
+;;                  :host "localhost:11434"
+;;                  :stream t
+;;                  :models '(phi4:latest qwen2.5-coder:14b)))
 
 ;; aider
-(use-package aidermacs
-  :bind (("C-c a" . aidermacs-transient-menu))
-  :config
-  :custom
-  (aidermacs-default-chat-mode 'architect)
-  (aidermacs-show-diff-after-change nil)
-  (aidermacs-default-model "openrouter/anthropic/claude-sonnet-4")
-  (aidermacs-architect-model "openrouter/anthropic/claude-opus-4")
-  )
+;; (use-package aidermacs
+;;   :bind (("C-c a" . aidermacs-transient-menu))
+;;   :config
+;;   :custom
+;;   (aidermacs-default-chat-mode 'architect)
+;;   (aidermacs-show-diff-after-change nil)
+;;   (aidermacs-default-model "openrouter/anthropic/claude-sonnet-4")
+;;   (aidermacs-architect-model "openrouter/anthropic/claude-opus-4")
+;;   )
 
 ;; eglot
 (setq eglot-report-progress nil)
@@ -428,7 +438,7 @@
 (defun shell-bastion ()
   "Shortcut for bastion remote shell."
   (interactive)
-  (let ((default-directory "/tssh:isharov@bastion:/home/isharov/"))
+  (let ((default-directory "/ssh:isharov@bastion.prd.clapp.clteam.io:/home/isharov/"))
     (shell "*shell-bastion*")))
 
 (defun shell-gitlab ()
@@ -437,11 +447,29 @@
   (let ((default-directory "/ssh:root@gitlab:/root/"))
     (shell "*shell-gitlab*")))
 
-(defun shell-ob-analyzer-finland ()
+(defun shell-ob-analyzer-finland-01 ()
   "Shortcut for ob-analyzer-finland remote shell."
   (interactive)
-  (let ((default-directory "/ssh:root@ob-analyzer-finland:/root/"))
-    (shell "*shell-ob-analyzer-finland*")))
+  (let ((default-directory "/ssh:root@ob-analyzer-finland-01:/root/"))
+    (shell "*shell-ob-analyzer-finland-01*")))
+
+(defun shell-ob-analyzer-finland-02 ()
+  "Shortcut for ob-analyzer-finland remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:root@ob-analyzer-finland-02:/root/"))
+    (shell "*shell-ob-analyzer-finland-02*")))
+
+(defun shell-ob-analyzer-finland-03 ()
+  "Shortcut for ob-analyzer-finland remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:root@ob-analyzer-finland-03:/root/"))
+    (shell "*shell-ob-analyzer-finland-03*")))
+
+(defun shell-ob-analyzer-finland-04 ()
+  "Shortcut for ob-analyzer-finland remote shell."
+  (interactive)
+  (let ((default-directory "/ssh:root@ob-analyzer-finland-04:/root/"))
+    (shell "*shell-ob-analyzer-finland-04*")))
 
 (defun shell-ob-analyzer-germany ()
   "Shortcut for ob-analyzer-germany remote shell."
