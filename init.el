@@ -283,7 +283,12 @@
 ;;   )
 
 ;; eglot
-(setq eglot-report-progress nil)
+(use-package eglot
+  :ensure t
+  :config (add-to-list 'eglot-server-programs
+                       '((python-mode python-ts-mode) "basedpyright-langserver" "--stdio"))
+  (setq eglot-report-progress nil)
+  )
 
 ;; copilot
 ;; it has implicit editorconfig melpa dependency
@@ -319,7 +324,6 @@
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 (add-hook 'tsx-ts-mode-hook
           (lambda ()
-            ;; (eglot-ensure)
             (combobulate-mode)
             ))
 
@@ -333,10 +337,8 @@
 
 ;; python
 ;; M-x find-library RET python RET
-;; (setq python-ts-mode-hook python-mode-hook)
 (add-hook 'python-ts-mode-hook
           (lambda ()
-            (eglot-ensure)
             (combobulate-mode)
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             (local-set-key (kbd "C-c C-f")
@@ -374,7 +376,6 @@
 ;; rustup component add rust-analyzer
 (add-hook 'rust-ts-mode-hook
           (lambda ()
-            (eglot-ensure)
             (combobulate-mode)
             ))
 
