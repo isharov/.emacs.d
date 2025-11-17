@@ -478,11 +478,11 @@
   (let ((default-directory "/ssh:root@ob-analyzer-germany:/root/"))
     (shell "*shell-ob-analyzer-germany*")))
 
-(defun shell-gametoken-prod ()
-  "Shortcut for gametoken prod remote shell."
+(defun shell-stg-ob-analyzer-00 ()
+  "Shortcut for stg-ob-analyzer remote shell."
   (interactive)
-  (let ((default-directory "/ssh:ec2-user@gametoken-prod:/home/ec2-user"))
-    (shell "*shell-gametoken-prod*")))
+  (let ((default-directory "/ssh:root@stg-ob-analyzer-00:/root/"))
+    (shell "*shell-stg-ob-analyzer-00*")))
 
 (defun shell-synology ()
   "Shortcut for synology remote shell."
