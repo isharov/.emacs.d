@@ -136,9 +136,10 @@
 (setq dired-dwim-target t)
 (global-set-key (kbd "C-x C-j") 'dired-jump)
 (put 'dired-find-alternate-file 'disabled nil)
+;; (setq dired-listing-switches "-la")
 (add-hook 'dired-mode-hook
           (lambda ()
-            (dired-omit-mode)
+            ;; (dired-omit-mode)
             (define-key dired-mode-map (kbd "<return>")
               'dired-find-alternate-file) ; was dired-advertised-find-file
             (define-key dired-mode-map (kbd "^")
