@@ -164,8 +164,8 @@
 (setq avy-all-windows nil) ; this window only
 
 ;; text selection
-(require 'expand-region)
-(global-set-key (kbd "C-M-SPC") 'er/expand-region)
+;; (require 'expand-region)
+;; (global-set-key (kbd "C-M-SPC") 'er/expand-region)
 (global-set-key (kbd "S-M-SPC") 'isharov/select-current-line)
 
 ;; text moving
@@ -215,19 +215,24 @@
         (rust-mode . rust-ts-mode)))
 
 ;; combobulate
-(add-to-list 'load-path "~/.emacs.d/pkgs/combobulate")
-(load "combobulate.el")
-(eval-after-load "combobulate"
-  '(progn
-     (define-key combobulate-key-map [M-left] nil)
-     (define-key combobulate-key-map [M-right] nil)
-     (define-key combobulate-key-map [M-up] nil)
-     (define-key combobulate-key-map [M-down] nil)
-     (define-key combobulate-key-map [C-left] 'combobulate-navigate-logical-previous)
-     (define-key combobulate-key-map [C-right] 'combobulate-navigate-logical-next)
-     (define-key combobulate-key-map [C-up] 'combobulate-navigate-up-list-maybe)
-     (define-key combobulate-key-map [C-down] 'combobulate-navigate-down-list-maybe)
-     ))
+;; (add-to-list 'load-path "~/.emacs.d/pkgs/combobulate")
+;; (load "combobulate.el")
+;; (eval-after-load "combobulate"
+;;   '(progn
+;;      (define-key combobulate-key-map [M-left] nil)
+;;      (define-key combobulate-key-map [M-right] nil)
+;;      (define-key combobulate-key-map [M-up] nil)
+;;      (define-key combobulate-key-map [M-down] nil)
+;;      (define-key combobulate-key-map [C-left] 'combobulate-navigate-logical-previous)
+;;      (define-key combobulate-key-map [C-right] 'combobulate-navigate-logical-next)
+;;      (define-key combobulate-key-map [C-up] 'combobulate-navigate-up-list-maybe)
+;;      (define-key combobulate-key-map [C-down] 'combobulate-navigate-down-list-maybe)
+;;      ))
+
+;; treesit-sexp
+(use-package treesit-sexp
+  :load-path "~/.emacs.d/pkgs/treesit-sexp")
+(global-treesit-sexp-mode 1)
 
 ;; direnv
 (direnv-mode)
@@ -288,6 +293,8 @@
   :ensure t
   :config (add-to-list 'eglot-server-programs
                        '((python-mode python-ts-mode) "basedpyright-langserver" "--stdio"))
+  ;; :config (add-to-list 'eglot-server-programs
+  ;;                      '((python-mode python-ts-mode) "ty" "server"))
   (setq eglot-report-progress nil)
   )
 
@@ -323,10 +330,6 @@
 
 ;; tsx
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-(add-hook 'tsx-ts-mode-hook
-          (lambda ()
-            (combobulate-mode)
-            ))
 
 ;; C++
 (add-hook 'c-mode-common-hook
@@ -340,7 +343,6 @@
 ;; M-x find-library RET python RET
 (add-hook 'python-ts-mode-hook
           (lambda ()
-            (combobulate-mode)
             (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             (local-set-key (kbd "C-c C-f")
                            (lambda ()
@@ -375,10 +377,6 @@
 
 ;; rust
 ;; rustup component add rust-analyzer
-(add-hook 'rust-ts-mode-hook
-          (lambda ()
-            (combobulate-mode)
-            ))
 
 ;; git
 (global-set-key (kbd "C-x g") 'magit-status)

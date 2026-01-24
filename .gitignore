@@ -12,6 +12,7 @@ recentf
 transient/
 eln-cache/
 pkgs/combobulate/
+pkgs/treesit-sexp/
 pkgs/helm-comint/
 pkgs/copilot.el/
 tree-sitter/
