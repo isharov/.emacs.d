@@ -164,8 +164,8 @@
 (setq avy-all-windows nil) ; this window only
 
 ;; text selection
-;; (require 'expand-region)
-;; (global-set-key (kbd "C-M-SPC") 'er/expand-region)
+(require 'expand-region)
+(global-set-key (kbd "C-M-SPC") 'er/expand-region)
 (global-set-key (kbd "S-M-SPC") 'isharov/select-current-line)
 
 ;; text moving
