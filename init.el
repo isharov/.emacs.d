@@ -159,9 +159,16 @@
 (global-set-key (kbd "C-S-c C-SPC") 'set-rectangular-region-anchor)
 
 ;; fast cursor move
-(avy-setup-default)
-(global-set-key (kbd "C-'") 'avy-goto-char-timer)
-(setq avy-all-windows nil) ; this window only
+(use-package flash
+  :commands (flash-jump flash-jump-continue flash-treesitter)
+  :bind ("C-'" . flash-jump)
+  :custom
+  (flash-multi-window t)
+  :init
+  ;; Search integration (labels during C-s, /, ?)
+  ;; (require 'flash-isearch)
+  ;; (flash-isearch-mode 1)
+  )
 
 ;; text selection
 (require 'expand-region)
