@@ -171,9 +171,18 @@
   )
 
 ;; text selection
-(require 'expand-region)
-(global-set-key (kbd "C-M-SPC") 'er/expand-region)
+;; (require 'expand-region)
+;; (global-set-key (kbd "C-M-SPC") 'er/expand-region)
 (global-set-key (kbd "S-M-SPC") 'isharov/select-current-line)
+
+(use-package expreg
+  :ensure t
+  :bind (("C-=" . expreg-expand)
+         ("C--" . expreg-contract)))
+
+(use-package treesit-sexp
+  :load-path "~/.emacs.d/pkgs/treesit-sexp")
+(global-treesit-sexp-mode 1)
 
 ;; text moving
 (global-set-key (kbd "<M-S-up>") 'move-text-up)
@@ -220,26 +229,6 @@
         (css-mode . css-ts-mode)
         (python-mode . python-ts-mode)
         (rust-mode . rust-ts-mode)))
-
-;; combobulate
-;; (add-to-list 'load-path "~/.emacs.d/pkgs/combobulate")
-;; (load "combobulate.el")
-;; (eval-after-load "combobulate"
-;;   '(progn
-;;      (define-key combobulate-key-map [M-left] nil)
-;;      (define-key combobulate-key-map [M-right] nil)
-;;      (define-key combobulate-key-map [M-up] nil)
-;;      (define-key combobulate-key-map [M-down] nil)
-;;      (define-key combobulate-key-map [C-left] 'combobulate-navigate-logical-previous)
-;;      (define-key combobulate-key-map [C-right] 'combobulate-navigate-logical-next)
-;;      (define-key combobulate-key-map [C-up] 'combobulate-navigate-up-list-maybe)
-;;      (define-key combobulate-key-map [C-down] 'combobulate-navigate-down-list-maybe)
-;;      ))
-
-;; treesit-sexp
-(use-package treesit-sexp
-  :load-path "~/.emacs.d/pkgs/treesit-sexp")
-(global-treesit-sexp-mode 1)
 
 ;; direnv
 (direnv-mode)
