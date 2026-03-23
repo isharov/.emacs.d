@@ -171,13 +171,12 @@
   )
 
 ;; text selection
-;; (require 'expand-region)
-;; (global-set-key (kbd "C-M-SPC") 'er/expand-region)
 (global-set-key (kbd "S-M-SPC") 'isharov/select-current-line)
 
 (use-package expreg
   :ensure t
-  :bind (("C-=" . expreg-expand)
+  :bind (("C-M-SPC" . expreg-expand)
+         ("C-=" . expreg-expand)
          ("C--" . expreg-contract)))
 
 (use-package treesit-sexp
@@ -383,6 +382,11 @@
    (define-key magit-mode-map (kbd "C-o") 'magit-diff-visit-worktree-file-other-window)
    )
  )
+;; Use single completing-read for merge branch selection so helm can intercept it.
+;; magit-merge uses completing-read-multiple (for octopus merges) which helm doesn't support.
+(with-eval-after-load 'magit-merge
+  (advice-add 'magit-read-other-branches-or-commits
+              :override #'magit-read-other-branch-or-commit))
 
 (global-diff-hl-mode)
 (diff-hl-flydiff-mode)
@@ -522,13 +526,9 @@
 (windmove-up)
 
 (let ((default-directory (or (getenv "EMACS_DEFAULT_DIRECTORY") "~/dev")))
-  (magit-status)
   (shell "*shell*")
   (shell "*shell*<1>")
   )
-(execute-kbd-macro "\C-m")
-(buf-move-left)
-;; (toggle-frame-fullscreen)
 
 (when (eq system-type 'darwin)
   (setq delete-by-moving-to-trash t)
