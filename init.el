@@ -39,6 +39,9 @@
               indent-tabs-mode nil
               show-trailing-whitespace nil)
 
+(add-hook 'after-change-major-mode-hook
+          (lambda () (modify-syntax-entry ?_ "w"))) ; '_' is part of a word in all modes
+
 (fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
 
@@ -330,7 +333,6 @@
 (add-hook 'c-mode-common-hook
           (lambda ()
             (local-set-key (kbd "C-x t") 'isharov/toggle-source)
-            (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
             ))
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ; using c++ mode for *.h files
 
@@ -338,7 +340,7 @@
 ;; M-x find-library RET python RET
 (add-hook 'python-ts-mode-hook
           (lambda ()
-            (modify-syntax-entry ?_ "w") ; now '_' is not considered a word-delimiter
+
             (local-set-key (kbd "C-c C-f")
                            (lambda ()
                              (interactive)
