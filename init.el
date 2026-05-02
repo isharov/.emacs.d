@@ -23,6 +23,8 @@
  c-basic-offset 4
  require-final-newline t
  kill-whole-line t
+ save-interprogram-paste-before-kill t  ;; Save the Clipboard Before Killing
+ kill-do-not-save-duplicates t
  recentf-max-saved-items 5000
  enable-recursive-minibuffers t
  history-delete-duplicates t
@@ -33,6 +35,7 @@
  create-lockfiles nil
  ring-bell-function 'ignore
  max-mini-window-height 4
+ window-combination-resize t  ;; Proportional Window Resizing
  ;; resize-mini-windows nil
  )
 (setq-default tab-width 4
@@ -70,7 +73,15 @@
 
 ;; Avoid performance issues in files with very long lines.
 (global-so-long-mode 1)
+;; These settings tell Emacs to assume left-to-right text everywhere
+;; and skip the bidirectional parenthesis algorithm
+(setq-default bidi-display-reordering 'left-to-right
+              bidi-paragraph-direction 'left-to-right)
 (setq bidi-inhibit-bpa t)
+;; Skip Fontification During Input
+(setq redisplay-skip-fontification-on-input t)
+;; Increase Process Output Buffer for LSP
+(setq read-process-output-max (* 4 1024 1024)) ; 4MB
 
 ;; window navigation
 (windmove-default-keybindings 'meta)
