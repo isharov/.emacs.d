@@ -132,6 +132,12 @@
 ;; ag --hidden --nocolor --nogroup --ignore-case --ignore=.git --ignore=.svn
 (setq helm-ag-base-command "rg --vimgrep --no-heading --smart-case --hidden --glob !.git"
       helm-ag-insert-at-point 'symbol)
+;; Emacs 30 made text-property functions honor buffer-read-only, which breaks
+;; helm-ag's result highlighting ("Buffer is read-only: #<buffer *helm-ag*>").
+(advice-add 'helm-ag--do-ag-propertize :around
+            (lambda (orig &rest args)
+              (let ((inhibit-read-only t))
+                (apply orig args))))
 
 ;; helm-ls-git
 (require 'helm-ls-git)
@@ -263,6 +269,11 @@
 (require 'kubel)
 (kubel-vterm-setup)
 (setq kubel-log-tail-n 1000)
+
+(defun k8s/zent-staging ()
+  (interactive)
+  (kubel-set-kubectl-config-file "~/.kube/zent.staging.config")
+  (kubel-open "zent-staging" "staging" "pods"))
 
 (defun k8s/zent-prod ()
   (interactive)
@@ -439,6 +450,8 @@
           (lambda ()
             (if (file-remote-p (path/current-dir))
                 (company-mode -1))))
+;; vterm
+(setq vterm-max-scrollback 20000)  ; max 100000
 ;; eat
 (setq eat-term-name "xterm-256color")
 
