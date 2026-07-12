@@ -258,9 +258,22 @@
   (interactive)
   (project/with-root (call-interactively 'compile)))
 
+(defun isharov/selection ()
+  "Active region text, or nil.
+Used to pre-fill searches from the selection only.  Deactivates the
+mark so the region does not expand while search preview moves point."
+  (when (use-region-p)
+    (prog1 (buffer-substring-no-properties (region-beginning) (region-end))
+      (deactivate-mark))))
+
+(defun isharov/consult-line ()
+  "Like `consult-line', seeded with the active region (selection) only."
+  (interactive)
+  (consult-line (isharov/selection)))
+
 (defun project/ag ()
   (interactive)
-  (helm-do-ag (project/root)))
+  (consult-ripgrep (project/root) (isharov/selection)))
 
 (defun theme/setup-font ()
   ;; (set-frame-font "Victor Mono 14" nil t)

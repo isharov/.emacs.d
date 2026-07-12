@@ -70,6 +70,8 @@
 (recentf-mode 1)
 (add-hook 'prog-mode-hook (lambda () (idle-highlight-mode t)))
 (global-hl-line-mode 1)
+(which-key-mode 1)    ; popup of follow-up keys after a prefix (built-in)
+(repeat-mode 1)       ; repeatable key sequences without re-pressing the prefix
 
 ;; Avoid performance issues in files with very long lines.
 (global-so-long-mode 1)
@@ -107,48 +109,118 @@
 ;; prefer ibuffer
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-;; helm mode
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
-(global-set-key (kbd "C-x b") 'helm-mini)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "C-x C-r") 'helm-recentf)
-(global-set-key (kbd "C-x r b") 'helm-filtered-bookmarks)
+;; minibuffer completion stack (vertico + orderless + marginalia + consult + embark)
+(use-package vertico
+  :ensure t
+  :init (vertico-mode 1)
+  :custom (vertico-cycle t))
 
-(setq helm-split-window-inside-p t)
-(when (executable-find "curl")
-  (setq helm-net-prefer-curl t))
-(helm-mode 1)
+;; helm-find-files-like path navigation: RET/TAB descend, DEL goes up a component
+(use-package vertico-directory
+  :ensure nil
+  :after vertico
+  :bind (:map vertico-map
+              ("RET"   . vertico-directory-enter)
+              ("DEL"   . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word)))
 
-;; helm-swoop
-(require 'helm-swoop)
-(global-set-key (kbd "M-i") 'helm-swoop)
-(setq helm-swoop-split-with-multiple-windows t)
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
-;; helm-ag
-(global-set-key (kbd "C-c g") 'project/ag)  ;; project search
-(global-set-key (kbd "C-c G") 'helm-do-ag)  ;; custom dir search
-;; rg --vimgrep --no-heading --smart-case
-;; ag --hidden --nocolor --nogroup --ignore-case --ignore=.git --ignore=.svn
-(setq helm-ag-base-command "rg --vimgrep --no-heading --smart-case --hidden --glob !.git"
-      helm-ag-insert-at-point 'symbol)
-;; Emacs 30 made text-property functions honor buffer-read-only, which breaks
-;; helm-ag's result highlighting ("Buffer is read-only: #<buffer *helm-ag*>").
-(advice-add 'helm-ag--do-ag-propertize :around
-            (lambda (orig &rest args)
-              (let ((inhibit-read-only t))
-                (apply orig args))))
+(use-package marginalia
+  :ensure t
+  :init (marginalia-mode 1))
 
-;; helm-ls-git
-(require 'helm-ls-git)
-(global-set-key (kbd "C-c f") 'helm-browse-project)
-(global-set-key (kbd "C-x r p") 'helm-projects-history)
+(use-package savehist
+  :ensure nil
+  :init (savehist-mode 1))
 
-;; company
-(add-hook 'after-init-hook 'global-company-mode)
-(global-set-key (kbd "C-<tab>") #'company-complete-common)
-;; (setq company-global-modes '(not shell-mode))
-;; (setq company-idle-delay nil)
+;; hide M-x commands irrelevant to the current major mode
+(setq read-extended-command-predicate #'command-completion-default-include-p)
+
+;; restore default bindings that helm had overridden (vertico now drives them)
+(global-set-key (kbd "M-x") 'execute-extended-command)
+(global-set-key (kbd "C-x C-f") 'find-file)
+
+;; consult: enhanced search / navigation commands
+(use-package consult
+  :ensure t
+  :bind (("M-y"     . consult-yank-pop)      ;; was helm-show-kill-ring
+         ("C-x b"   . consult-buffer)        ;; was helm-mini
+         ("C-x C-r" . consult-recent-file)   ;; was helm-recentf
+         ("C-x r b" . consult-bookmark)      ;; was helm-filtered-bookmarks
+         ("M-i"     . isharov/consult-line)  ;; was helm-swoop (seed with selection)
+         ("M-I"     . consult-line-multi)    ;; multi-buffer swoop
+         ("M-g i"   . consult-imenu)         ;; jump to symbol/heading in buffer
+         ("M-g I"   . consult-imenu-multi))  ;; ...across project buffers
+  :custom (consult-line-start-from-top t))
+
+;; consult-dir: jump the minibuffer to recent dirs, bookmarks, and TRAMP hosts
+(use-package consult-dir
+  :ensure t
+  :bind (("C-x C-d" . consult-dir)                 ;; was list-directory (rarely used)
+         :map vertico-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))     ;; minibuffer-only; global C-x C-j stays dired-jump
+
+;; project / directory ripgrep search (was helm-ag; project/ag lives in helpers.el)
+(global-set-key (kbd "C-c g") 'project/ag)                      ;; project search
+(global-set-key (kbd "C-c G")                                  ;; custom dir search (prompts for dir)
+                (lambda () (interactive)
+                  (consult-ripgrep '(4) (isharov/selection))))
+
+;; project file finding / switching (was helm-ls-git; project-wide, no git requirement)
+(global-set-key (kbd "C-c f") 'project-find-file)
+(global-set-key (kbd "C-x r p") 'project-switch-project)       ;; was helm-projects-history
+
+;; embark: contextual actions + export results to an editable buffer
+(use-package embark
+  :ensure t
+  :bind (("C-." . embark-act)
+         ("C-;" . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command))
+
+(use-package embark-consult
+  :ensure t
+  :after (embark consult)
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
+
+;; wgrep: edit exported ripgrep results and write back to files (was helm-ag-edit)
+(use-package wgrep
+  :ensure t
+  :custom (wgrep-auto-save-buffer t)
+  :config
+  ;; single-key `e' in an exported grep/ripgrep buffer -> editable wgrep
+  ;; (then edit in place, C-c C-c to save all files, C-c C-k to abort)
+  (with-eval-after-load 'grep
+    (define-key grep-mode-map (kbd "e") #'wgrep-change-to-wgrep-mode)))
+
+;; in-buffer completion: corfu + cape (was company)
+(use-package corfu
+  :ensure t
+  :init (global-corfu-mode 1)
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-delay 0.1)
+  (corfu-auto-prefix 2)
+  :config
+  (require 'corfu-popupinfo)
+  (corfu-popupinfo-mode 1))
+
+(use-package cape
+  :ensure t
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-keyword))
+
+(global-set-key (kbd "C-<tab>") #'completion-at-point)
 
 ;; dired
 (setq dired-recursive-copies 'always)
@@ -221,6 +293,8 @@
 (setq project-vc-extra-root-markers '(".project"))
 
 ;; tree-sitter
+;; NB: treesit-auto was tried here but its global-treesit-auto-mode made every
+;; file-open (incl. consult preview) slow, so we keep the manual remaps instead.
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -256,7 +330,7 @@
 (global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
 
 ;; flymake
-(global-set-key (kbd "C-c e") 'flymake-show-buffer-diagnostics)
+(global-set-key (kbd "C-c e") 'consult-flymake) ;; navigable diagnostics list (was flymake-show-buffer-diagnostics)
 
 ;; tramp mode
 (setq password-cache-expiry nil)
@@ -387,7 +461,7 @@
 ;; (add-hook 'inferior-python-mode-hook
 ;;           (lambda ()
 ;;             (comint/turn-on-history)
-;;             (define-key inferior-python-mode-map (kbd "M-r") 'helm-comint-input-ring)
+;;             (define-key inferior-python-mode-map (kbd "M-r") 'consult-history)
 ;;             ))
 
 ;; go
@@ -406,11 +480,8 @@
    (define-key magit-mode-map (kbd "C-o") 'magit-diff-visit-worktree-file-other-window)
    )
  )
-;; Use single completing-read for merge branch selection so helm can intercept it.
-;; magit-merge uses completing-read-multiple (for octopus merges) which helm doesn't support.
-(with-eval-after-load 'magit-merge
-  (advice-add 'magit-read-other-branches-or-commits
-              :override #'magit-read-other-branch-or-commit))
+;; (helm couldn't do completing-read-multiple, so magit octopus-merge selection
+;;  used to be advised down to a single read here; vertico handles CRM natively.)
 
 (global-diff-hl-mode)
 (diff-hl-flydiff-mode)
@@ -430,26 +501,26 @@
   )
 
 ;; shell
-(add-to-list 'load-path "~/.emacs.d/pkgs/helm-comint/")
-(load "helm-comint.el") ;; TODO: is it deprecated? What's the alternative
 (add-hook 'shell-mode-hook 'comint/turn-on-history)
 ;(add-hook 'shell-mode-hook 'buffer-disable-undo)
 ;(add-hook 'shell-mode-hook (lambda () (goto-address-mode)))
 ;(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 (add-hook 'kill-buffer-hook 'comint-write-input-ring)
 (add-hook 'kill-emacs-hook 'comint/write-input-ring-all-buffers)
-(define-key shell-mode-map (kbd "M-r") 'helm-comint-input-ring)
+;; consult-history reads comint-input-ring (was helm-comint-input-ring)
+(with-eval-after-load 'shell
+  (define-key shell-mode-map (kbd "M-r") 'consult-history))
 (setq
  comint-input-ignoredups t           ; no duplicates in command history
  ;comint-completion-addsuffix t      ; insert space/slash after file completion
  comint-get-old-input (lambda () "") ; what to run when i press enter on a line above the current prompt
  comint-input-ring-size 5000         ; max shell history size
 )
-; company completion would stuck on slow tramp connection
+; in-buffer completion would stuck on slow tramp connection
 (add-hook 'shell-mode-hook
           (lambda ()
             (if (file-remote-p (path/current-dir))
-                (company-mode -1))))
+                (corfu-mode -1))))
 ;; vterm
 (setq vterm-max-scrollback 20000)  ; max 100000
 ;; eat
