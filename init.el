@@ -144,6 +144,8 @@
 ;; restore default bindings that helm had overridden (vertico now drives them)
 (global-set-key (kbd "M-x") 'execute-extended-command)
 (global-set-key (kbd "C-x C-f") 'find-file)
+(global-set-key (kbd "C-o") #'isharov/find-file-at-point)  ;; was open-line
+;; (global-set-key (kbd "C-c o") #'open-line)  ;; open-line moved off C-o
 
 ;; consult: enhanced search / navigation commands
 (use-package consult
@@ -504,7 +506,7 @@
 (add-hook 'shell-mode-hook 'comint/turn-on-history)
 ;(add-hook 'shell-mode-hook 'buffer-disable-undo)
 ;(add-hook 'shell-mode-hook (lambda () (goto-address-mode)))
-;(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
+(add-hook 'shell-mode-hook 'compilation-shell-minor-mode)
 (add-hook 'kill-buffer-hook 'comint-write-input-ring)
 (add-hook 'kill-emacs-hook 'comint/write-input-ring-all-buffers)
 ;; consult-history reads comint-input-ring (was helm-comint-input-ring)

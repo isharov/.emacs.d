@@ -271,6 +271,44 @@ mark so the region does not expand while search preview moves point."
   (interactive)
   (consult-line (isharov/selection)))
 
+(defun isharov/find-file-at-point ()
+  "Open the path at point and, when present, jump to its `:LINE' suffix.
+Relative paths are resolved from the current project's root before falling
+back to `default-directory'.  A region takes precedence over point.  When
+there is no path at point, or it names no existing file, fall back to a
+`find-file' prompt, seeded with the guess only when it looks like a path
+\(so a bare word at point does not pollute the prompt)."
+  (interactive)
+  (require 'ffap)
+  (require 'project)
+  (let* ((text (if (use-region-p)
+                   (buffer-substring-no-properties (region-beginning) (region-end))
+                 (ffap-string-at-point)))
+         (match (and text (not (string-empty-p text))
+                     (string-match "\\`\\(.+?\\)\\(?::\\([0-9]+\\)\\)?\\'" text)))
+         (path (and match (match-string 1 text)))
+         (line (and match (match-string 2 text)))
+         (project (project-current nil))
+         (root (if project (project-root project) default-directory))
+         (file (and path
+                    (seq-find #'file-exists-p
+                              (list (expand-file-name path root)
+                                    (expand-file-name path default-directory))))))
+    (if (not file)
+        ;; nothing usable at point (or the path names no existing file): fall
+        ;; back to an ordinary `find-file' prompt.  Only seed it when the guess
+        ;; looks like a path (has a directory separator or an extension) so a
+        ;; plain word at point does not get substituted in.
+        (let ((seed (and path
+                         (or (string-search "/" path)
+                             (file-name-extension path))
+                         path)))
+          (find-file (read-file-name "Find file: " nil nil nil seed)))
+      (find-file file)
+      (when line
+        (goto-char (point-min))
+        (forward-line (1- (string-to-number line)))))))
+
 (defun project/ag ()
   (interactive)
   (consult-ripgrep (project/root) (isharov/selection)))
