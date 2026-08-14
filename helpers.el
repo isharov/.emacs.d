@@ -313,6 +313,32 @@ there is no path at point, or it names no existing file, fall back to a
   (interactive)
   (consult-ripgrep (project/root) (isharov/selection)))
 
+;; ghostel is a real pty, so it has no comint-input-ring for
+;; consult-history to read.  Offer the shell's own history file instead.
+(defun ghostel/history ()
+  "Pick a command from the shell history file and put it at the prompt.
+The command is typed but not sent, so it can still be edited."
+  (interactive)
+  (let ((cmds nil))
+    (with-temp-buffer
+      (let ((coding-system-for-read 'utf-8-emacs))  ; tolerate zsh meta bytes
+        (insert-file-contents (or (getenv "HISTFILE") "~/.zsh_history")))
+      (goto-char (point-min))
+      ;; strip zsh's extended-history prefix ": <start>:<elapsed>;"
+      (while (re-search-forward "^\\(?:: [0-9]+:[0-9]*;\\)?\\(.+\\)$" nil t)
+        (push (match-string-no-properties 1) cmds)))
+    (setq cmds (delete-dups cmds))      ; pushed in file order, so newest first
+    (let ((cmd (completing-read
+                "History: "
+                (lambda (str pred action)
+                  (if (eq action 'metadata)
+                      '(metadata (display-sort-function . identity))
+                    (complete-with-action action cmds str pred)))
+                nil t)))
+      (if (eq (bound-and-true-p ghostel--input-mode) 'line)
+          (ghostel--line-mode-replace-input cmd)
+        (ghostel-send-string cmd)))))
+
 (defun theme/setup-font ()
   ;; (set-frame-font "Victor Mono 14" nil t)
   (set-frame-font "Iosevka Term 16" nil t)

@@ -70,8 +70,9 @@
 (recentf-mode 1)
 (add-hook 'prog-mode-hook (lambda () (idle-highlight-mode t)))
 (global-hl-line-mode 1)
-(which-key-mode 1)    ; popup of follow-up keys after a prefix (built-in)
-(repeat-mode 1)       ; repeatable key sequences without re-pressing the prefix
+(which-key-mode -1)    ; no popup of follow-up keys after a prefix
+(global-eldoc-mode -1) ; no docs of the symbol at point in the echo area
+(repeat-mode 1)        ; repeatable key sequences without re-pressing the prefix
 
 ;; Avoid performance issues in files with very long lines.
 (global-so-long-mode 1)
@@ -498,7 +499,7 @@
 
 ;; color-theme
 (when (window-system)
-  (load-theme 'doom-one-light t)
+  (load-theme 'doom-one t)
   (theme/setup-font)
   )
 
@@ -527,6 +528,17 @@
 (setq vterm-max-scrollback 20000)  ; max 100000
 ;; eat
 (setq eat-term-name "xterm-256color")
+;; ghostel
+(use-package ghostel
+  :ensure t
+  :bind (:map ghostel-line-mode-map
+         ("M-r" . ghostel/history)
+         :map ghostel-mode-map
+         ;; C-r is left to the terminal (fzf) in semi-char mode
+         ("C-c M-r" . ghostel/history))
+  :custom
+  ;; scrollback in bytes
+  (ghostel-max-scrollback (* 32 1024 1024)))
 
 (defun shell-arneb ()
   "Shortcut for arneb remote shell."
@@ -625,8 +637,8 @@
 (windmove-up)
 
 (let ((default-directory (or (getenv "EMACS_DEFAULT_DIRECTORY") "~/dev")))
-  (shell "*shell*")
-  (shell "*shell*<1>")
+  (ghostel 1)
+  (ghostel 2)
   )
 
 (when (eq system-type 'darwin)
