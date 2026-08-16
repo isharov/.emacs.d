@@ -91,6 +91,15 @@
 ;(setq windmove-wrap-around t)
 (winner-mode 1)
 
+;; Always Open Emacs Buffers in the Current Active Window
+(use-package single-window
+  :vc (:url "https://github.com/jamescherti/single-window.el"
+       :rev :newest)
+  :config
+  (single-window-mode 1)
+  ;; hide the " single-window" mode-line lighter
+  (setcdr (assq 'single-window-mode minor-mode-alist) '("")))
+
 ;; buffer moving
 (global-set-key (kbd "<C-S-up>") 'buf-move-up)
 (global-set-key (kbd "<C-S-down>") 'buf-move-down)
@@ -275,8 +284,10 @@
          ("C--" . expreg-contract)))
 
 (use-package treesit-sexp
-  :load-path "~/.emacs.d/pkgs/treesit-sexp")
-(global-treesit-sexp-mode 1)
+  :vc (:url "https://github.com/alexispurslane/treesit-sexp"
+       :rev :newest)
+  :config
+  (global-treesit-sexp-mode 1))
 
 ;; text moving
 (global-set-key (kbd "<M-S-up>") 'move-text-up)
@@ -477,6 +488,10 @@
 ;; git
 (global-set-key (kbd "C-x g") 'magit-status)
 (setq magit-diff-refine-hunk 'all)
+;; single-window-mode forces every buffer into the current window, so the
+;; commit diff would immediately replace COMMIT_EDITMSG. Skip it; C-c C-d
+;; (magit-diff-while-committing) shows it on demand.
+(setq magit-commit-show-diff nil)
 (add-hook
  'magit-mode-hook
  (lambda ()
