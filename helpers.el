@@ -258,6 +258,16 @@
   (interactive)
   (project/with-root (call-interactively 'compile)))
 
+(defun project/magit-status ()
+  "Run `magit-status' in the current project's root.
+`project-switch-project' only binds `project-current-directory-override',
+not `default-directory', and `magit-status' decides whether to prompt for
+a repository by looking at `default-directory' -- hence this wrapper."
+  (interactive)
+  (require 'project)
+  (let ((default-directory (project-root (project-current t))))
+    (magit-status default-directory)))
+
 (defun isharov/selection ()
   "Active region text, or nil.
 Used to pre-fill searches from the selection only.  Deactivates the

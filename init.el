@@ -309,8 +309,8 @@
 ;; magit-status as a project-switch-project action (C-x p p, then "m").
 ;; Also reachable directly as C-x p m inside a project.
 (with-eval-after-load 'project
-  (define-key project-prefix-map (kbd "m") 'magit-status)
-  (add-to-list 'project-switch-commands '(magit-status "Magit" ?m) t))
+  (define-key project-prefix-map (kbd "m") 'project/magit-status)
+  (add-to-list 'project-switch-commands '(project/magit-status "Magit" ?m) t))
 
 ;; tree-sitter
 ;; NB: treesit-auto was tried here but its global-treesit-auto-mode made every
@@ -650,10 +650,10 @@
 (split-window-horizontally)
 (windmove-up)
 
-(let ((default-directory (or (getenv "EMACS_DEFAULT_DIRECTORY") "~/dev")))
-  (ghostel 1)
-  (ghostel 2)
-  )
+;; (let ((default-directory (or (getenv "EMACS_DEFAULT_DIRECTORY") "~/dev")))
+;;   (ghostel 1)
+;;   (ghostel 2)
+;;   )
 
 (when (eq system-type 'darwin)
   (setq delete-by-moving-to-trash t)
