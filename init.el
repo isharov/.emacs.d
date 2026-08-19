@@ -186,7 +186,7 @@
 
 ;; project file finding / switching (was helm-ls-git; project-wide, no git requirement)
 (global-set-key (kbd "C-c f") 'project-find-file)
-(global-set-key (kbd "C-x r p") 'project-switch-project)       ;; was helm-projects-history
+(global-set-key (kbd "C-c p") 'project-switch-project)         ;; short alias for C-x p p
 
 ;; embark: contextual actions + export results to an editable buffer
 (use-package embark
@@ -306,6 +306,12 @@
 ;; project extra markers
 (setq project-vc-extra-root-markers '(".project"))
 
+;; magit-status as a project-switch-project action (C-x p p, then "m").
+;; Also reachable directly as C-x p m inside a project.
+(with-eval-after-load 'project
+  (define-key project-prefix-map (kbd "m") 'magit-status)
+  (add-to-list 'project-switch-commands '(magit-status "Magit" ?m) t))
+
 ;; tree-sitter
 ;; NB: treesit-auto was tried here but its global-treesit-auto-mode made every
 ;; file-open (incl. consult preview) slow, so we keep the manual remaps instead.
@@ -339,9 +345,6 @@
 
 ;; direnv
 (direnv-mode)
-
-;; spell checking
-(global-set-key (kbd "C-c s") 'isharov/toggle-flyspell)
 
 ;; flymake
 (global-set-key (kbd "C-c e") 'consult-flymake) ;; navigable diagnostics list (was flymake-show-buffer-diagnostics)
@@ -440,24 +443,22 @@
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
 ;; C++
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (local-set-key (kbd "C-x t") 'isharov/toggle-source)
-            ))
+(with-eval-after-load 'cc-mode
+  (define-key c-mode-base-map (kbd "C-c C-t") 'isharov/toggle-source))
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ; using c++ mode for *.h files
 
 ;; python
 ;; M-x find-library RET python RET
+(with-eval-after-load 'python
+  (define-key python-ts-mode-map (kbd "C-c C-f")   ;; was python-eldoc-at-point
+              (lambda ()
+                (interactive)
+                (buffer/shell-command "ruff format")
+                (buffer/shell-command "ruff check --fix --unsafe-fixes")
+                (revert-buffer t t t)
+                )))
 (add-hook 'python-ts-mode-hook
           (lambda ()
-
-            (local-set-key (kbd "C-c C-f")
-                           (lambda ()
-                             (interactive)
-                             (buffer/shell-command "ruff format")
-                             (buffer/shell-command "ruff check --fix --unsafe-fixes")
-                             (revert-buffer t t t)
-                             ))
             ;; delete region if active else dedent
             (local-set-key (kbd "<backspace>")
                            (lambda ()
@@ -492,12 +493,8 @@
 ;; commit diff would immediately replace COMMIT_EDITMSG. Skip it; C-c C-d
 ;; (magit-diff-while-committing) shows it on demand.
 (setq magit-commit-show-diff nil)
-(add-hook
- 'magit-mode-hook
- (lambda ()
-   (define-key magit-mode-map (kbd "C-o") 'magit-diff-visit-worktree-file-other-window)
-   )
- )
+(with-eval-after-load 'magit
+  (define-key magit-mode-map (kbd "C-o") 'magit-diff-visit-worktree-file-other-window))
 ;; (helm couldn't do completing-read-multiple, so magit octopus-merge selection
 ;;  used to be advised down to a single read here; vertico handles CRM natively.)
 
@@ -554,6 +551,8 @@
   :custom
   ;; scrollback in bytes
   (ghostel-max-scrollback (* 32 1024 1024)))
+
+(global-set-key (kbd "C-c s") 'ghostel/new)  ;; new terminal (like C-u M-x ghostel)
 
 (defun shell-arneb ()
   "Shortcut for arneb remote shell."

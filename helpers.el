@@ -339,6 +339,11 @@ The command is typed but not sent, so it can still be edited."
           (ghostel--line-mode-replace-input cmd)
         (ghostel-send-string cmd)))))
 
+(defun ghostel/new ()
+  "Start a new ghostel terminal, same as \\[universal-argument] \\[ghostel]."
+  (interactive)
+  (ghostel '(4)))
+
 (defun theme/setup-font ()
   ;; (set-frame-font "Victor Mono 14" nil t)
   (set-frame-font "Iosevka Term 16" nil t)
