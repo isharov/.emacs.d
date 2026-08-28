@@ -1,4 +1,4 @@
-;; package --- My init.el
+;;; init.el --- My init.el  -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;; Code:
 
@@ -306,11 +306,20 @@
 ;; project extra markers
 (setq project-vc-extra-root-markers '(".project"))
 
-;; magit-status as a project-switch-project action (C-x p p, then "m").
-;; Also reachable directly as C-x p m inside a project.
+;; project-switch-project (C-x p p, C-c p) dispatch menu.  The stock entries
+;; (find-regexp / find-dir / vc-dir / eshell / any-command) are replaced -- we
+;; use ripgrep, magit and ghostel instead.  The custom commands live in
+;; helpers.el; they resolve the root themselves because project-switch-project
+;; only binds project-current-directory-override, never default-directory.
 (with-eval-after-load 'project
   (define-key project-prefix-map (kbd "m") 'project/magit-status)
-  (add-to-list 'project-switch-commands '(project/magit-status "Magit" ?m) t))
+  (define-key project-prefix-map (kbd "s") 'project/ghostel)  ;; was project-shell
+  (setq project-switch-commands
+        '((project-find-file    "Find file" ?f)
+          (project/ag           "Search"    ?g)
+          (project-dired        "Dired"     ?d)
+          (project/magit-status "Magit"     ?m)
+          (project/ghostel      "Shell"     ?s))))
 
 ;; tree-sitter
 ;; NB: treesit-auto was tried here but its global-treesit-auto-mode made every
@@ -552,7 +561,7 @@
   ;; scrollback in bytes
   (ghostel-max-scrollback (* 32 1024 1024)))
 
-(global-set-key (kbd "C-c s") 'ghostel/new)  ;; new terminal (like C-u M-x ghostel)
+(global-set-key (kbd "C-c s") 'project/ghostel)  ;; new terminal in the project root
 
 (defun shell-arneb ()
   "Shortcut for arneb remote shell."

@@ -1,4 +1,5 @@
-(eval-when-compile (require 'cl))
+;;; helpers.el --- Helper functions  -*- lexical-binding: t; -*-
+(require 'cl-lib)
 
 (defun isharov/cvs-status ()
   (interactive)
@@ -82,15 +83,15 @@
       (let ((name (path/join base f)))
         (when (and (file-directory-p name)
                    (not (equal (substring f 0 1) ".")))
-          (add-to-list 'res name))))
+          (cl-pushnew name res :test #'equal))))
     res))
 
 (defun path/subdirs-rec (base)
   (let ((res nil))
     (dolist (s (path/subdirs base))
-      (add-to-list 'res s)
+      (cl-pushnew s res :test #'equal)
       (dolist (r (path/subdirs-rec s))
-        (add-to-list 'res r)))
+        (cl-pushnew r res :test #'equal)))
     res))
 
 (defun path/current-dir ()
@@ -214,11 +215,12 @@
   (buffer/mapc-buffers 'comint-write-input-ring))
 
 (defun project/root ()
-  (if (tramp-tramp-file-p (buffer-file-name))
-      (path/current-dir)
-    (or (project/locals-root)
-        (project/git-root default-directory)
-        default-directory)))
+  (or (bound-and-true-p project-current-directory-override)
+      (if (tramp-tramp-file-p (buffer-file-name))
+          (path/current-dir)
+        (or (project/locals-root)
+            (project/git-root default-directory)
+            default-directory))))
 
 (defun project/locals-root ()
   (defun parent-dir (path)
@@ -235,7 +237,7 @@
             ((dir-has-project-file path)
              (setq return-path path
                    path nil))
-            (t (set 'path (parent-dir path)))))
+            (t (setq path (parent-dir path)))))
     return-path))
 
 (defun project/git-root (dir)
@@ -267,6 +269,16 @@ a repository by looking at `default-directory' -- hence this wrapper."
   (require 'project)
   (let ((default-directory (project-root (project-current t))))
     (magit-status default-directory)))
+
+(defun project/ghostel ()
+  "Start a new ghostel terminal, same as \\[universal-argument] \\[ghostel].
+Starts in the current project's root, falling back to `default-directory'
+outside a project -- so this is safe to bind globally."
+  (interactive)
+  (require 'project)
+  (let* ((pr (project-current nil))  ; nil: never prompt, this is a shell
+         (default-directory (if pr (project-root pr) default-directory)))
+    (ghostel '(4))))
 
 (defun isharov/selection ()
   "Active region text, or nil.
@@ -348,11 +360,6 @@ The command is typed but not sent, so it can still be edited."
       (if (eq (bound-and-true-p ghostel--input-mode) 'line)
           (ghostel--line-mode-replace-input cmd)
         (ghostel-send-string cmd)))))
-
-(defun ghostel/new ()
-  "Start a new ghostel terminal, same as \\[universal-argument] \\[ghostel]."
-  (interactive)
-  (ghostel '(4)))
 
 (defun theme/setup-font ()
   ;; (set-frame-font "Victor Mono 14" nil t)

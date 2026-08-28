@@ -1,4 +1,4 @@
-;;; russian-mac.el --- Quail package for inputting Cyrillic characters
+;;; russian-mac.el --- Quail package for inputting Cyrillic characters  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019
 

@@ -1,4 +1,4 @@
-;;; tssh-tramp.el --- TRAMP integration for docker containers  -*-
+;;; tssh-tramp.el --- TRAMP integration for docker containers  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;
