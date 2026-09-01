@@ -558,6 +558,8 @@
          ;; C-r is left to the terminal (fzf) in semi-char mode
          ("C-c M-r" . ghostel/history))
   :custom
+  ;; keep copy mode after M-w instead of exiting back to semi-char
+  (ghostel-readonly-fast-exit nil)
   ;; scrollback in bytes
   (ghostel-max-scrollback (* 32 1024 1024)))
 
