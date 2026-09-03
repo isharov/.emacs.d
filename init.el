@@ -552,14 +552,21 @@
 ;; ghostel
 (use-package ghostel
   :ensure t
-  :bind (:map ghostel-line-mode-map
-         ("M-r" . ghostel/history)
-         :map ghostel-mode-map
-         ;; C-r is left to the terminal (fzf) in semi-char mode
-         ("C-c M-r" . ghostel/history))
+  ;; C-r is left to the terminal (fzf), M-r is the Emacs-side history picker.
+  :bind (:map ghostel-mode-map
+         ("M-r" . ghostel/history))
   :custom
   ;; keep copy mode after M-w instead of exiting back to semi-char
   (ghostel-readonly-fast-exit nil)
+  ;; semi-char mode encodes C-S-<arrow> and sends it to the pty, so the
+  ;; global buf-move-* bindings never fire in a terminal buffer.  Listing
+  ;; them here leaves them unbound in ghostel-semi-char-mode-map, so they
+  ;; fall through to the global map.  The first line is ghostel's default.
+  (ghostel-keymap-exceptions
+   '("C-c" "C-x" "C-u" "C-h" "M-x" "M-:" "C-\\"
+     "C-S-<up>" "C-S-<down>" "C-S-<left>" "C-S-<right>"
+     ;; M-r: ghostel/history instead of the shell's own binding
+     "M-r"))
   ;; scrollback in bytes
   (ghostel-max-scrollback (* 32 1024 1024)))
 

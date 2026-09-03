@@ -336,30 +336,24 @@ there is no path at point, or it names no existing file, fall back to a
   (consult-ripgrep (project/root) (isharov/selection)))
 
 ;; ghostel is a real pty, so it has no comint-input-ring for
-;; consult-history to read.  Offer the shell's own history file instead.
+;; consult-history to read.  `ghostel-shell-history' asks the buffer's own
+;; shell instead (zsh: "fc -R; fc -lnr 1"), newest first -- so it sees the
+;; running session's history, multi-line entries, and remote (TRAMP) hosts.
 (defun ghostel/history ()
-  "Pick a command from the shell history file and put it at the prompt.
+  "Pick a command from the shell history and put it at the prompt.
 The command is typed but not sent, so it can still be edited."
   (interactive)
-  (let ((cmds nil))
-    (with-temp-buffer
-      (let ((coding-system-for-read 'utf-8-emacs))  ; tolerate zsh meta bytes
-        (insert-file-contents (or (getenv "HISTFILE") "~/.zsh_history")))
-      (goto-char (point-min))
-      ;; strip zsh's extended-history prefix ": <start>:<elapsed>;"
-      (while (re-search-forward "^\\(?:: [0-9]+:[0-9]*;\\)?\\(.+\\)$" nil t)
-        (push (match-string-no-properties 1) cmds)))
-    (setq cmds (delete-dups cmds))      ; pushed in file order, so newest first
-    (let ((cmd (completing-read
-                "History: "
-                (lambda (str pred action)
-                  (if (eq action 'metadata)
-                      '(metadata (display-sort-function . identity))
-                    (complete-with-action action cmds str pred)))
-                nil t)))
-      (if (eq (bound-and-true-p ghostel--input-mode) 'line)
-          (ghostel--line-mode-replace-input cmd)
-        (ghostel-send-string cmd)))))
+  (let* ((cmds (delete-dups (ghostel-shell-history)))  ; newest first
+         (cmd (completing-read
+               "History: "
+               (lambda (str pred action)
+                 (if (eq action 'metadata)
+                     '(metadata (display-sort-function . identity))
+                   (complete-with-action action cmds str pred)))
+               nil t)))
+    (if (eq (bound-and-true-p ghostel--input-mode) 'line)
+        (ghostel--line-mode-replace-input cmd)
+      (ghostel-send-string cmd))))
 
 (defun theme/setup-font ()
   ;; (set-frame-font "Victor Mono 14" nil t)
