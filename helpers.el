@@ -335,26 +335,6 @@ there is no path at point, or it names no existing file, fall back to a
   (interactive)
   (consult-ripgrep (project/root) (isharov/selection)))
 
-;; ghostel is a real pty, so it has no comint-input-ring for
-;; consult-history to read.  `ghostel-shell-history' asks the buffer's own
-;; shell instead (zsh: "fc -R; fc -lnr 1"), newest first -- so it sees the
-;; running session's history, multi-line entries, and remote (TRAMP) hosts.
-(defun ghostel/history ()
-  "Pick a command from the shell history and put it at the prompt.
-The command is typed but not sent, so it can still be edited."
-  (interactive)
-  (let* ((cmds (delete-dups (ghostel-shell-history)))  ; newest first
-         (cmd (completing-read
-               "History: "
-               (lambda (str pred action)
-                 (if (eq action 'metadata)
-                     '(metadata (display-sort-function . identity))
-                   (complete-with-action action cmds str pred)))
-               nil t)))
-    (if (eq (bound-and-true-p ghostel--input-mode) 'line)
-        (ghostel--line-mode-replace-input cmd)
-      (ghostel-send-string cmd))))
-
 (defun theme/setup-font ()
   ;; (set-frame-font "Victor Mono 14" nil t)
   (set-frame-font "Iosevka Term 16" nil t)

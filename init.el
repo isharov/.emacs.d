@@ -4,6 +4,8 @@
 
 (load "~/.emacs.d/helpers")
 (load "~/.emacs.d/pkgs/tssh-tramp.el")
+;; must load before `savehist-mode' below, so savehist can restore into it
+(load "~/.emacs.d/pkgs/global-history.el")
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
@@ -533,7 +535,7 @@
 (add-hook 'kill-emacs-hook 'comint/write-input-ring-all-buffers)
 ;; consult-history reads comint-input-ring (was helm-comint-input-ring)
 (with-eval-after-load 'shell
-  (define-key shell-mode-map (kbd "M-r") 'consult-history))
+  (define-key shell-mode-map (kbd "M-r") 'history/pick))
 (setq
  comint-input-ignoredups t           ; no duplicates in command history
  ;comint-completion-addsuffix t      ; insert space/slash after file completion
@@ -552,9 +554,10 @@
 ;; ghostel
 (use-package ghostel
   :ensure t
-  ;; C-r is left to the terminal (fzf), M-r is the Emacs-side history picker.
+  ;; C-r is left to the terminal (fzf), M-r is the Emacs-side history picker
+  ;; (this buffer's shell + the global history; C-u M-r for global only).
   :bind (:map ghostel-mode-map
-         ("M-r" . ghostel/history))
+         ("M-r" . history/pick))
   :custom
   ;; keep copy mode after M-w instead of exiting back to semi-char
   (ghostel-readonly-fast-exit nil)
@@ -569,6 +572,11 @@
      "M-r"))
   ;; scrollback in bytes
   (ghostel-max-scrollback (* 32 1024 1024)))
+
+;; Record every line submitted at a prompt -- ghostel (including shells
+;; reached through ssh/docker inside a terminal) and comint alike.
+;; See pkgs/global-history.el.
+(history/global-setup)
 
 (global-set-key (kbd "C-c s") 'project/ghostel)  ;; new terminal in the project root
 
