@@ -144,11 +144,22 @@ prompts bypass this hook -- `comint-send-invisible' calls
 
 ;;; Backfill
 
+(defun history/global--strip-timestamp (entry)
+  "Strip zsh EXTENDED_HISTORY metadata from ENTRY.
+With that option set zsh writes \": <seconds>:<elapsed>;<command>\"
+instead of the bare command."
+  (if (string-match "\\`: [0-9]+:[0-9]+;" entry)
+      (substring entry (match-end 0))
+    entry))
+
 (defun history/global--file-entries (file)
   "Return FILE's history entries, newest first.
-comint history files and a plain zsh HISTFILE are both oldest-first with
-one entry per line; in the zsh file a trailing backslash continues the
-entry onto the next line, which is how it stores a multi-line command."
+comint history files and a shell HISTFILE are both oldest-first with one
+entry per line; in a zsh file a trailing backslash continues the entry
+onto the next line, which is how it stores a multi-line command.  The
+per-entry metadata the shells can be configured to write -- zsh's
+EXTENDED_HISTORY prefix, bash's HISTTIMEFORMAT comment line -- is
+dropped, so a remote host with either option set still parses."
   (when (file-readable-p file)
     (with-temp-buffer
       (insert-file-contents file)          ; auto-detect: histfiles are not always clean UTF-8
@@ -157,10 +168,16 @@ entry onto the next line, which is how it stores a multi-line command."
         (while (not (eobp))
           (let ((line (buffer-substring-no-properties
                        (line-beginning-position) (line-end-position))))
-            (if (string-suffix-p "\\" line)
-                (setq pending (concat pending (substring line 0 -1) "\n"))
-              (push (concat pending line) entries)   ; reading forward ends newest first
-              (setq pending nil)))
+            (cond
+             ;; bash with HISTTIMEFORMAT stamps a "#<seconds>" line of its
+             ;; own before each entry.
+             ((and (null pending) (string-match-p "\\`#[0-9]+\\'" line)))
+             ((string-suffix-p "\\" line)
+              (setq pending (concat pending (substring line 0 -1) "\n")))
+             (t
+              (push (history/global--strip-timestamp (concat pending line))
+                    entries)                         ; reading forward ends newest first
+              (setq pending nil))))
           (forward-line 1))
         (when pending (push pending entries))
         entries))))
@@ -209,19 +226,58 @@ deduplicated and truncated to `history/global-size'."
 
 ;;; Retrieval
 
+(defcustom history/shell-history-files
+  '("~/.zsh_history" "~/.bash_history" "~/.histfile" "~/.ash_history")
+  "History files tried, in order, when the shell cannot answer for itself.
+Read relative to the terminal's host, so on a TRAMP buffer these are
+the remote user's files.  The first readable one wins."
+  :type '(repeat string)
+  :group 'shell)
+
+(defun history/shell--histfile-entries ()
+  "Entries from the first readable `history/shell-history-files', or nil.
+Resolved on the buffer's host: `insert-file-contents' goes through
+TRAMP for a remote `default-directory', so no remote process is
+involved -- only what the shell has already flushed to disk."
+  (let ((host (or (file-remote-p default-directory) "")))
+    (seq-some (lambda (name)
+                (let ((file (concat host name)))
+                  (and (file-readable-p file)
+                       (history/global--file-entries file))))
+              history/shell-history-files)))
+
+(defun history/shell-history ()
+  "The current buffer's own shell history, newest first, or nil.
+For a terminal, `ghostel-shell-history' is the better answer: it asks
+the live shell, so it has the running session's commands and not just
+what has been flushed to disk.  It needs ghostel to have recognized the
+shell though, and on a remote host that runs through `getent passwd'
+and then an interactive shell over TRAMP -- both of which come back
+empty-handed on a trimmed-down image, leaving `M-r' with nothing but
+the global history.  Fall back to the history file, which needs
+neither."
+  (cond
+   ((derived-mode-p 'ghostel-mode)
+    (let (failure)
+      (or (condition-case err
+              (ghostel-shell-history)
+            (error (setq failure err) nil))
+          (history/shell--histfile-entries)
+          (progn
+            (when failure
+              (message "No shell history here: %s"
+                       (error-message-string failure)))
+            nil))))
+   ((and (derived-mode-p 'comint-mode) (ring-p comint-input-ring))
+    (ring-elements comint-input-ring))))
+
 (defun history/candidates (&optional global-only)
   "Merged history for the current buffer, newest first, deduplicated.
-The buffer's own history comes first -- `ghostel-shell-history' for a
-terminal, the input ring for comint -- then everything ever recorded
-globally.  GLOBAL-ONLY skips the buffer's own, which for a terminal
-means skipping a subprocess (and, on TRAMP, a round trip)."
-  (let ((local (unless global-only
-                 (cond
-                  ((derived-mode-p 'ghostel-mode)
-                   (ignore-errors (ghostel-shell-history)))
-                  ((and (derived-mode-p 'comint-mode)
-                        (ring-p comint-input-ring))
-                   (ring-elements comint-input-ring))))))
+The buffer's own history comes first -- see `history/shell-history' --
+then everything ever recorded globally.  GLOBAL-ONLY skips the buffer's
+own, which for a terminal means skipping a subprocess (and, on TRAMP, a
+round trip)."
+  (let ((local (unless global-only (history/shell-history))))
     ;; Trailing nil forces `append' to copy: `delete-dups' is destructive
     ;; and would otherwise cut entries out of `history/global' itself.
     (delete-dups (append local history/global nil))))
