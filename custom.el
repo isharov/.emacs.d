@@ -6,14 +6,13 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    '(buffer-move cape consult consult-dir corfu dash-functional diff-hl
-                 direnv docker dockerfile-mode doom-themes eat embark
+                 direnv docker dockerfile-mode doom-themes embark
                  embark-consult expreg flash flymake-ruff ghostel
-                 go-mode idle-highlight-mode jenkinsfile-mode kubel
-                 lua-mode magit marginalia markdown-mode mermaid-mode
-                 move-text multiple-cursors orderless restclient
-                 rust-mode scala-mode single-window spacemacs-theme
-                 treesit-sexp vertico vterm vundo web-mode wgrep
-                 yaml-mode))
+                 go-mode idle-highlight-mode kubel lua-mode magit
+                 marginalia markdown-mode mermaid-mode move-text
+                 multiple-cursors orderless restclient rust-mode
+                 single-window spacemacs-theme treesit-sexp vertico
+                 vundo web-mode yaml-mode))
  '(package-vc-selected-packages
    '((treesit-sexp :url "https://github.com/alexispurslane/treesit-sexp")
      (single-window :url

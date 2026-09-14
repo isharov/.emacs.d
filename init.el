@@ -44,10 +44,17 @@
               indent-tabs-mode nil
               show-trailing-whitespace nil)
 
+(setopt sentence-end-double-space nil)  ; archaic default
+(setopt view-lossage-auto-refresh t)    ; live-updating C-h l
+(setopt project-mode-line t)            ; project name in the mode line
+;; C-o is `isharov/find-file-at-point'; without this ffap will DNS-ping
+;; anything at point that merely looks like a hostname.
+(setopt ffap-machine-p-known 'reject)
+
 (add-hook 'after-change-major-mode-hook
           (lambda () (modify-syntax-entry ?_ "w"))) ; '_' is part of a word in all modes
 
-(fset 'yes-or-no-p 'y-or-n-p) ; type y/n instead of yes/no
+(setopt use-short-answers t) ; type y/n instead of yes/no
 (blink-cursor-mode -1)
 
 (load-file "~/.emacs.d/pkgs/russian-mac.el")
@@ -59,22 +66,39 @@
         mac-function-modifier 'control  ; left-control
         mac-option-modifier 'control    ; right-control
         mac-command-modifier 'meta
-        mac-pass-command-to-system nil))
+        mac-pass-command-to-system nil)
+  ;; the click that focuses Emacs only raises the window, it does not move point
+  (setopt ns-click-through nil))
 
 ;; common modes
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode -1)
+;; Use the OS file-notification interface instead of stat'ing every buffer
+;; every `auto-revert-interval' seconds -- that polling is costly with TRAMP
+;; buffers open.  Set back to nil if file changes stop being picked up.
+(setopt auto-revert-avoid-polling t)
+(setopt auto-revert-interval 5)
+(setopt auto-revert-check-vc-info t)
 (global-auto-revert-mode t)
+(setopt show-paren-delay 0)
+(setopt show-paren-context-when-offscreen 'overlay) ; show an offscreen openparen
 (show-paren-mode 1)
 (electric-pair-mode 1)
 ;(key-chord-mode 1)
+;; Never recall files from temp dirs -- scratch/agent working directories under
+;; /tmp would otherwise flood the list (they are real files, so recentf-cleanup
+;; will not drop them).
+(setq recentf-exclude '("\\`/tmp/" "\\`/private/tmp/" "\\`/var/folders/"))
 (recentf-mode 1)
-(add-hook 'prog-mode-hook (lambda () (idle-highlight-mode t)))
+(use-package idle-highlight-mode
+  :hook (prog-mode . idle-highlight-mode))
 (global-hl-line-mode 1)
 (which-key-mode -1)    ; no popup of follow-up keys after a prefix
 (global-eldoc-mode -1) ; no docs of the symbol at point in the echo area
 (repeat-mode 1)        ; repeatable key sequences without re-pressing the prefix
+(when (display-graphic-p)
+  (mouse-shift-adjust-mode 1)) ; shift-drag adjusts the region instead of restarting it
 
 ;; Avoid performance issues in files with very long lines.
 (global-so-long-mode 1)
@@ -103,16 +127,17 @@
   (setcdr (assq 'single-window-mode minor-mode-alist) '("")))
 
 ;; buffer moving
-(global-set-key (kbd "<C-S-up>") 'buf-move-up)
-(global-set-key (kbd "<C-S-down>") 'buf-move-down)
-(global-set-key (kbd "<C-S-left>") 'buf-move-left)
-(global-set-key (kbd "<C-S-right>") 'buf-move-right)
+(use-package buffer-move
+  :bind (("<C-S-up>"    . buf-move-up)
+         ("<C-S-down>"  . buf-move-down)
+         ("<C-S-left>"  . buf-move-left)
+         ("<C-S-right>" . buf-move-right)))
 
 ;; enable some commands
 (put 'erase-buffer 'disabled nil)
 
 ;; auto-delete trailing whitespace
-(add-hook 'write-file-hooks
+(add-hook 'before-save-hook
           (lambda ()
             (when (not (derived-mode-p 'markdown-mode))  ; trailing whitespaces are meaningful in markdown
               (delete-trailing-whitespace)
@@ -197,22 +222,17 @@
          ("C-;" . embark-dwim)
          ("C-h B" . embark-bindings))
   :init
-  (setq prefix-help-command #'embark-prefix-help-command))
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  ;; which-key is off (see above); this brings back the *automatic* popup of
+  ;; follow-up keys after a prefix, rendered through embark's completing-read.
+  (setopt embark-auto-prefix-help-delay 1.0)
+  (embark-auto-prefix-help-mode 1))
 
 (use-package embark-consult
   :ensure t
   :after (embark consult)
   :hook (embark-collect-mode . consult-preview-at-point-mode))
-
-;; wgrep: edit exported ripgrep results and write back to files (was helm-ag-edit)
-(use-package wgrep
-  :ensure t
-  :custom (wgrep-auto-save-buffer t)
-  :config
-  ;; single-key `e' in an exported grep/ripgrep buffer -> editable wgrep
-  ;; (then edit in place, C-c C-c to save all files, C-c C-k to abort)
-  (with-eval-after-load 'grep
-    (define-key grep-mode-map (kbd "e") #'wgrep-change-to-wgrep-mode)))
 
 ;; in-buffer completion: corfu + cape (was company)
 (use-package corfu
@@ -253,16 +273,18 @@
             ))
 
 ;; multiple cursors
-(require 'multiple-cursors)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-S-c C-<") 'mc/mark-all-like-this)
-(global-set-key (kbd "C-S-c C->") 'mc/mark-more-like-this-extended)
-(global-set-key (kbd "C-S-c C-m") 'mc/mark-all-in-region)
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C-S-c C-e") 'mc/edit-ends-of-lines)
-(global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
-(global-set-key (kbd "C-S-c C-SPC") 'set-rectangular-region-anchor)
+;; (every command below is autoloaded by the package, so :bind defers the load
+;;  until the first cursor is actually marked)
+(use-package multiple-cursors
+  :bind (("C->"         . mc/mark-next-like-this)
+         ("C-<"         . mc/mark-previous-like-this)
+         ("C-S-c C-<"   . mc/mark-all-like-this)
+         ("C-S-c C->"   . mc/mark-more-like-this-extended)
+         ("C-S-c C-m"   . mc/mark-all-in-region)
+         ("C-S-c C-S-c" . mc/edit-lines)
+         ("C-S-c C-e"   . mc/edit-ends-of-lines)
+         ("C-S-c C-a"   . mc/edit-beginnings-of-lines)
+         ("C-S-c C-SPC" . set-rectangular-region-anchor)))
 
 ;; fast cursor move
 (use-package flash
@@ -275,6 +297,19 @@
   ;; (require 'flash-isearch)
   ;; (flash-isearch-mode 1)
   )
+
+;; isearch
+;; (`isearch-forward-thing-at-point' is already on the global M-s M-., and
+;;  M-s . is isearch-forward-symbol-at-point -- C-. stays embark-act.)
+(use-package isearch
+  :ensure nil
+  :custom
+  (isearch-lazy-count t)                    ; "(3/17)" match counter in the prompt
+  (lazy-count-prefix-format "(%s/%s) ")
+  (isearch-allow-motion t)                  ; C-a/C-e/M-</M-> move between matches
+  (isearch-allow-scroll t)
+  (isearch-repeat-on-direction-change t)    ; C-r goes straight to the previous match
+  (isearch-wrap-pause 'no-ding))
 
 ;; text selection
 (global-set-key (kbd "S-M-SPC") 'isharov/select-current-line)
@@ -292,8 +327,9 @@
   (global-treesit-sexp-mode 1))
 
 ;; text moving
-(global-set-key (kbd "<M-S-up>") 'move-text-up)
-(global-set-key (kbd "<M-S-down>") 'move-text-down)
+(use-package move-text
+  :bind (("<M-S-up>"   . move-text-up)
+         ("<M-S-down>" . move-text-down)))
 
 ;; handy pairs
 ;; (global-set-key (kbd "M-[") 'insert-pair)
@@ -324,8 +360,8 @@
           (project/ghostel      "Shell"     ?s))))
 
 ;; tree-sitter
-;; NB: treesit-auto was tried here but its global-treesit-auto-mode made every
-;; file-open (incl. consult preview) slow, so we keep the manual remaps instead.
+;; Where to fetch each grammar.  `treesit-auto-install-grammar' below makes
+;; Emacs offer to install one the first time a mode needs it.
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -343,19 +379,45 @@
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")
-        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")))
-;; (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
-(setq major-mode-remap-alist
-      '((bash-mode . bash-ts-mode)
-        (js2-mode . js-ts-mode)
-        (typescript-mode . typescript-ts-mode)
-        (js-json-mode . json-ts-mode)
-        (css-mode . css-ts-mode)
-        (python-mode . python-ts-mode)
-        (rust-mode . rust-ts-mode)))
+        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+        ;; js-ts-mode needs jsdoc alongside javascript
+        (jsdoc "https://github.com/tree-sitter/tree-sitter-jsdoc")))
+(setopt treesit-auto-install-grammar 'ask)  ; installs into ~/.emacs.d/tree-sitter
+
+;; `treesit-enabled-modes' (new in Emacs 31) replaces the hand-written
+;; major-mode-remap-alist that used to live here.  It is lazy -- the ts-mode is
+;; picked when a file is actually visited -- so unlike treesit-auto there is no
+;; global minor mode scanning every file-open (incl. consult previews).
+;;
+;; This is an explicit list rather than t on purpose.  t enables *every*
+;; ts-mode, including c-ts-mode, c++-ts-mode, java-ts-mode and ruby-ts-mode,
+;; for which we have no grammars: visiting a .c or .java file then signals a
+;; mode error and leaves the buffer in a ts-mode with no parser at all -- no
+;; font-lock, no indentation.  It would also route C/C++ away from the cc-mode
+;; settings configured at the top of this file.  markdown-ts-mode is left out
+;; for a different reason: it derives from text-mode, not markdown-mode, so the
+;; trailing-whitespace hook above would stop exempting markdown files.
+(setopt treesit-enabled-modes
+        '(bash-ts-mode        ; NB: the old list said bash-mode, which does not
+                              ; exist (it is sh-mode), so this never fired
+          cmake-ts-mode
+          css-ts-mode
+          dockerfile-ts-mode
+          go-ts-mode
+          mhtml-ts-mode      ; .html; html-ts-mode is not an accepted value here
+          js-ts-mode
+          json-ts-mode
+          python-ts-mode
+          rust-ts-mode
+          toml-ts-mode
+          tsx-ts-mode
+          typescript-ts-mode
+          yaml-ts-mode))
 
 ;; direnv
-(direnv-mode)
+(use-package direnv
+  :demand t                ; the mode has to be live before the first file opens
+  :config (direnv-mode))
 
 ;; flymake
 (global-set-key (kbd "C-c e") 'consult-flymake) ;; navigable diagnostics list (was flymake-show-buffer-diagnostics)
@@ -365,12 +427,17 @@
 (setq tramp-histfile-override t)  ;; disable history file
 
 ;; docker
-(global-set-key (kbd "C-c d") 'docker)
+(use-package docker
+  :bind ("C-c d" . docker))
 
 ;; k8s
-(require 'kubel)
-(kubel-vterm-setup)
-(setq kubel-log-tail-n 1000)
+(use-package kubel
+  ;; `kubel-set-kubectl-config-file' is NOT in kubel's own autoloads, and the
+  ;; k8s/* helpers below call it *before* the autoloaded `kubel-open' -- listing
+  ;; it here makes use-package generate the autoload, so the helpers pull kubel
+  ;; in on first use.
+  :commands (kubel kubel-open kubel-set-kubectl-config-file)
+  :custom (kubel-log-tail-n 1000))
 
 (defun k8s/zent-staging ()
   (interactive)
@@ -412,12 +479,17 @@
 
 ;; eglot
 (use-package eglot
-  :ensure t
+  :ensure nil  ; built in since Emacs 29
   :config (add-to-list 'eglot-server-programs
                        '((python-mode python-ts-mode) "basedpyright-langserver" "--stdio"))
   ;; :config (add-to-list 'eglot-server-programs
   ;;                      '((python-mode python-ts-mode) "ty" "server"))
   (setq eglot-report-progress nil)
+  ;; Every LSP event is otherwise appended to a per-server event buffer, which
+  ;; is the single biggest eglot cost on a chatty server.
+  (fset #'jsonrpc--log-event #'ignore)
+  (setopt eglot-send-changes-idle-time 0.1)
+  (setopt eglot-extend-to-xref t)  ; manage files outside the project reached via xref
   )
 
 ;; copilot
@@ -450,9 +522,6 @@
             ))
 (setq json-ts-mode-indent-offset 4)
 
-;; tsx
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-
 ;; C++
 (with-eval-after-load 'cc-mode
   (define-key c-mode-base-map (kbd "C-c C-t") 'isharov/toggle-source))
@@ -479,11 +548,13 @@
                                (python-indent-dedent-line-backspace 1))
                              ))
             ))
-(add-hook 'eglot-managed-mode-hook
-          (lambda ()
-            (when (derived-mode-p 'python-ts-mode)
-              (flymake-ruff-load))
-            ))
+(use-package flymake-ruff
+  :commands (flymake-ruff-load)
+  :init
+  (add-hook 'eglot-managed-mode-hook
+            (lambda ()
+              (when (derived-mode-p 'python-ts-mode)
+                (flymake-ruff-load)))))
 ;; (add-hook 'inferior-python-mode-hook
 ;;           (lambda ()
 ;;             (comint/turn-on-history)
@@ -498,33 +569,45 @@
 ;; rustup component add rust-analyzer
 
 ;; git
-(global-set-key (kbd "C-x g") 'magit-status)
-(setq magit-diff-refine-hunk 'all)
-;; single-window-mode forces every buffer into the current window, so the
-;; commit diff would immediately replace COMMIT_EDITMSG. Skip it; C-c C-d
-;; (magit-diff-while-committing) shows it on demand.
-(setq magit-commit-show-diff nil)
-(with-eval-after-load 'magit
-  (define-key magit-mode-map (kbd "C-o") 'magit-diff-visit-worktree-file-other-window))
+(use-package magit
+  :bind (("C-x g" . magit-status)
+         :map magit-mode-map
+         ("C-o" . magit-diff-visit-worktree-file-other-window))
+  :custom
+  (magit-diff-refine-hunk 'all)
+  ;; single-window-mode forces every buffer into the current window, so the
+  ;; commit diff would immediately replace COMMIT_EDITMSG. Skip it; C-c C-d
+  ;; (magit-diff-while-committing) shows it on demand.
+  (magit-commit-show-diff nil))
 ;; (helm couldn't do completing-read-multiple, so magit octopus-merge selection
 ;;  used to be advised down to a single read here; vertico handles CRM natively.)
 
-(global-diff-hl-mode)
-(diff-hl-flydiff-mode)
-; (diff-hl-margin-mode)
-(add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-(setq diff-hl-disable-on-remote t)
+(use-package diff-hl
+  :demand t              ; the gutter should be there from the first buffer on
+  :custom (diff-hl-disable-on-remote t)
+  ;; NB: only post-refresh is real.  `diff-hl-magit-pre-refresh' has been an
+  ;; obsolete alias for `ignore' since diff-hl 1.11.0, so the pre-refresh hook
+  ;; this config used to add did nothing; dropped.
+  :hook (magit-post-refresh . diff-hl-magit-post-refresh)
+  :config
+  (global-diff-hl-mode)
+  (diff-hl-flydiff-mode)
+  ;; (diff-hl-margin-mode)
+  )
 
 ;; svn
 ;; (require 'dsvn)
 ;; (global-set-key (kbd "C-c v s") 'isharov/svn-status)
 
 ;; color-theme
+(use-package doom-themes
+  :if (window-system)
+  :demand t
+  :config (load-theme 'doom-one t))
+
+;; (font setup lives in helpers.el and is independent of the theme package)
 (when (window-system)
-  (load-theme 'doom-one t)
-  (theme/setup-font)
-  )
+  (theme/setup-font))
 
 ;; shell
 (add-hook 'shell-mode-hook 'comint/turn-on-history)
@@ -547,10 +630,6 @@
           (lambda ()
             (if (file-remote-p (path/current-dir))
                 (corfu-mode -1))))
-;; vterm
-(setq vterm-max-scrollback 20000)  ; max 100000
-;; eat
-(setq eat-term-name "xterm-256color")
 ;; ghostel
 (use-package ghostel
   :ensure t
@@ -560,7 +639,7 @@
          ("M-r" . history/pick))
   :custom
   ;; keep copy mode after M-w instead of exiting back to semi-char
-  (ghostel-readonly-fast-exit nil)
+  ;; (ghostel-readonly-fast-exit nil)
   ;; semi-char mode encodes C-S-<arrow> and sends it to the pty, so the
   ;; global buf-move-* bindings never fire in a terminal buffer.  Listing
   ;; them here leaves them unbound in ghostel-semi-char-mode-map, so they
@@ -662,8 +741,9 @@
 ;; (setq mermaid-output-format ".svg")
 
 ;; restclient.el
-(require 'restclient)
-(setq restclient-inhibit-cookies t)  ;; enforce explicit cookies
+(use-package restclient
+  :commands (restclient-mode)
+  :custom (restclient-inhibit-cookies t))  ;; enforce explicit cookies
 ;(setq tls-program '("gnutls-cli --insecure --x509cafile %t -p %p %h" "gnutls-cli --insecure --x509cafile %t -p %p %h --protocols ssl3"))
 ;(custom-reevaluate-setting 'tls-program)
 
@@ -675,6 +755,7 @@
 (windmove-down)
 (split-window-horizontally)
 (windmove-up)
+(balance-windows)  ; equal splits even if the frame settled at an odd size
 
 ;; (let ((default-directory (or (getenv "EMACS_DEFAULT_DIRECTORY") "~/dev")))
 ;;   (ghostel 1)
@@ -688,6 +769,10 @@
      When using Homebrew, install it using \"brew install trash\"."
     (call-process (executable-find "trash") nil 0 nil file))
   )
+
+;; Restore the GC threshold early-init.el raised for the duration of startup.
+;; `bound-and-true-p' because --batch does not load early-init.el at all.
+(setq gc-cons-threshold (or (bound-and-true-p bedrock--initial-gc-threshold) 800000))
 
 (provide 'init)
 ;;; init.el ends here
