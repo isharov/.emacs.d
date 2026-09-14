@@ -280,6 +280,26 @@ outside a project -- so this is safe to bind globally."
          (default-directory (if pr (project-root pr) default-directory)))
     (ghostel '(4))))
 
+(defmacro ghostel/define-remote-shell (host dir)
+  "Define `shell-HOST', a ghostel terminal for the remote DIR.
+Ghostel spawns the shell on the far end when `default-directory' is a
+TRAMP path, so these are real remote ptys.  The buffer is named
+\"*shell-HOST*\", which is also ghostel's slot key, so calling the
+command again returns to that terminal; a prefix argument follows
+\\[ghostel] -- \\[universal-argument] opens an extra terminal on the
+same host, a number picks that instance."
+  (let ((command (intern (format "shell-%s" host)))
+        (buffer (format "*shell-%s*" host)))
+    `(defun ,command (&optional arg)
+       ,(format "Shortcut for %s remote shell." host)
+       (interactive "P")
+       ;; `ghostel-buffer-name' has to be defined for the let below to bind
+       ;; it dynamically -- the autoload alone would leave it lexical.
+       (require 'ghostel)
+       (let ((ghostel-buffer-name ,buffer)
+             (default-directory ,dir))
+         (ghostel arg)))))
+
 (defun isharov/selection ()
   "Active region text, or nil.
 Used to pre-fill searches from the selection only.  Deactivates the

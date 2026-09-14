@@ -659,65 +659,20 @@
 
 (global-set-key (kbd "C-c s") 'project/ghostel)  ;; new terminal in the project root
 
-(defun shell-arneb ()
-  "Shortcut for arneb remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:root@arneb#20002:/"))
-    (shell "*shell-arneb*")))
-
-(defun shell-bastion ()
-  "Shortcut for bastion remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:isharov@bastion.prd.clapp.clteam.io:/home/isharov/"))
-    (shell "*shell-bastion*")))
-
-(defun shell-gitlab ()
-  "Shortcut for gitlab remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:root@gitlab:/root/"))
-    (shell "*shell-gitlab*")))
-
-(defun shell-ob-analyzer-finland-01 ()
-  "Shortcut for ob-analyzer-finland remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:root@ob-analyzer-finland-01:/root/"))
-    (shell "*shell-ob-analyzer-finland-01*")))
-
-(defun shell-ob-analyzer-finland-02 ()
-  "Shortcut for ob-analyzer-finland remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:root@ob-analyzer-finland-02:/root/"))
-    (shell "*shell-ob-analyzer-finland-02*")))
-
-(defun shell-ob-analyzer-finland-03 ()
-  "Shortcut for ob-analyzer-finland remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:root@ob-analyzer-finland-03:/root/"))
-    (shell "*shell-ob-analyzer-finland-03*")))
-
-(defun shell-ob-analyzer-finland-04 ()
-  "Shortcut for ob-analyzer-finland remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:root@ob-analyzer-finland-04:/root/"))
-    (shell "*shell-ob-analyzer-finland-04*")))
-
-(defun shell-ob-analyzer-germany ()
-  "Shortcut for ob-analyzer-germany remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:root@ob-analyzer-germany:/root/"))
-    (shell "*shell-ob-analyzer-germany*")))
-
-(defun shell-stg-ob-analyzer-00 ()
-  "Shortcut for stg-ob-analyzer remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:root@stg-ob-analyzer-00:/root/"))
-    (shell "*shell-stg-ob-analyzer-00*")))
-
-(defun shell-synology ()
-  "Shortcut for synology remote shell."
-  (interactive)
-  (let ((default-directory "/ssh:192.168.1.3:~"))
-    (shell "*shell-synology*")))
+;; Remote shells.  These were comint `shell' buffers; ghostel spawns the
+;; shell on the far end of the TRAMP path instead, so they are real ptys
+;; (fzf, htop, less behave) and feed the global history like any other
+;; terminal.  The macro lives in helpers.el.
+(ghostel/define-remote-shell arneb    "/ssh:root@arneb#20002:/")
+(ghostel/define-remote-shell bastion  "/ssh:isharov@bastion.prd.clapp.clteam.io:/home/isharov/")
+(ghostel/define-remote-shell gitlab   "/ssh:root@gitlab:/root/")
+(ghostel/define-remote-shell synology "/ssh:192.168.1.3:~/")
+(ghostel/define-remote-shell ob-analyzer-finland-01 "/ssh:root@ob-analyzer-finland-01:/root/")
+(ghostel/define-remote-shell ob-analyzer-finland-02 "/ssh:root@ob-analyzer-finland-02:/root/")
+(ghostel/define-remote-shell ob-analyzer-finland-03 "/ssh:root@ob-analyzer-finland-03:/root/")
+(ghostel/define-remote-shell ob-analyzer-finland-04 "/ssh:root@ob-analyzer-finland-04:/root/")
+(ghostel/define-remote-shell ob-analyzer-germany    "/ssh:root@ob-analyzer-germany:/root/")
+(ghostel/define-remote-shell stg-ob-analyzer-00     "/ssh:root@stg-ob-analyzer-00:/root/")
 
 
 ;; org
